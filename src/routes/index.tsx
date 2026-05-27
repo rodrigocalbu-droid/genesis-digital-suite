@@ -459,25 +459,26 @@ function WhyGenesis() {
 }
 
 const PROJECTS = [
-  { img: project1, name: "Nova Store", cat: "E-commerce premium" },
-  { img: project2, name: "Atlas Analytics", cat: "Dashboard SaaS" },
-  { img: project3, name: "WhatsBot 24/7", cat: "Bot de WhatsApp + IA" },
-  { img: project4, name: "Funnel Apex", cat: "Funnel de ventas" },
+  { img: project1, name: "Nova Store", catKey: "proj.p1.cat" },
+  { img: project2, name: "Atlas Analytics", catKey: "proj.p2.cat" },
+  { img: project3, name: "WhatsBot 24/7", catKey: "proj.p3.cat" },
+  { img: project4, name: "Funnel Apex", catKey: "proj.p4.cat" },
 ];
 
 function Portfolio() {
+  const { t } = useLang();
   return (
     <section id="proyectos" className="relative py-28">
       <div className="mx-auto max-w-7xl px-6">
         <Reveal>
           <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
             <SectionHeader
-              eyebrow="Proyectos"
-              title={<>Trabajo seleccionado.<br/>Resultados <span className="text-gradient-electric">reales</span>.</>}
+              eyebrow={t("proj.eyebrow")}
+              title={<>{t("proj.title.1")}<br/>{t("proj.title.2")} <span className="text-gradient-electric">{t("proj.title.3")}</span>.</>}
             />
             <a href={WHATSAPP_URL} target="_blank" rel="noreferrer"
               className="inline-flex items-center gap-2 text-sm text-white/70 hover:text-white transition self-start md:self-auto">
-              Quiero algo así <ArrowRight className="h-4 w-4" />
+              {t("proj.cta")} <ArrowRight className="h-4 w-4" />
             </a>
           </div>
         </Reveal>
@@ -494,7 +495,7 @@ function Portfolio() {
                 </div>
                 <div className="flex items-center justify-between p-6">
                   <div>
-                    <div className="text-xs uppercase tracking-widest text-[#f5d76e]/80">{p.cat}</div>
+                    <div className="text-xs uppercase tracking-widest text-[#f5d76e]/80">{t(p.catKey)}</div>
                     <h3 className="font-display text-xl md:text-2xl font-medium mt-1">{p.name}</h3>
                   </div>
                   <span className="inline-flex h-11 w-11 items-center justify-center rounded-full glass-strong group-hover:bg-white group-hover:text-black transition">
