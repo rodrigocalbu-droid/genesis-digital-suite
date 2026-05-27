@@ -202,6 +202,7 @@ function LangSwitcher() {
 }
 
 function Hero() {
+  const { t } = useLang();
   return (
     <section id="top" className="relative pt-36 pb-24 md:pt-44 md:pb-32 overflow-hidden">
       <div className="absolute inset-0 -z-10 radial-glow" />
@@ -211,23 +212,22 @@ function Hero() {
           <div className="flex justify-center">
             <span className="inline-flex items-center gap-2 rounded-full glass px-4 py-1.5 text-xs text-white/80">
               <span className="h-1.5 w-1.5 rounded-full bg-[#3b82f6] animate-pulse-glow" />
-              Agencia digital · IA · Automatización
+              {t("hero.badge")}
             </span>
           </div>
         </Reveal>
         <Reveal delay={100}>
           <h1 className="font-display mt-8 text-center text-5xl md:text-7xl lg:text-[88px] leading-[1.02] font-semibold tracking-tight">
-            Transformamos negocios
+            {t("hero.title.1")}
             <br className="hidden md:block" />{" "}
-            tradicionales en{" "}
-            <span className="text-gradient-electric">sistemas digitales</span>{" "}
-            <span className="text-gradient-gold">inteligentes</span>.
+            {t("hero.title.2")}{" "}
+            <span className="text-gradient-electric">{t("hero.title.3")}</span>{" "}
+            <span className="text-gradient-gold">{t("hero.title.4")}</span>.
           </h1>
         </Reveal>
         <Reveal delay={200}>
           <p className="mx-auto mt-7 max-w-2xl text-center text-base md:text-lg text-white/60 leading-relaxed">
-            Creamos páginas web, automatizaciones y soluciones digitales que hacen crecer marcas
-            modernas. Diseño premium, código limpio, resultados medibles.
+            {t("hero.subtitle")}
           </p>
         </Reveal>
         <Reveal delay={300}>
@@ -239,14 +239,14 @@ function Hero() {
               className="group relative inline-flex items-center justify-center gap-2 rounded-full bg-white text-black px-7 py-3.5 text-sm font-medium transition hover:scale-[1.02] glow-electric"
             >
               <MessageCircle className="h-4 w-4" />
-              Hablar por WhatsApp
+              {t("hero.cta.whatsapp")}
               <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
             </a>
             <a
               href="#proyectos"
               className="inline-flex items-center justify-center gap-2 rounded-full glass-strong px-7 py-3.5 text-sm font-medium text-white hover:bg-white/10 transition"
             >
-              Ver proyectos
+              {t("hero.cta.projects")}
               <ArrowUpRight className="h-4 w-4" />
             </a>
           </div>
@@ -267,14 +267,14 @@ function Hero() {
             <FloatingCard
               className="absolute -left-2 md:left-4 top-10 animate-float-slow"
               icon={<Brain className="h-4 w-4 text-[#7dd3fc]" />}
-              title="IA conectada"
-              value="98% precisión"
+              title={t("hero.card.ai")}
+              value={t("hero.card.ai.value")}
             />
             <FloatingCard
               className="absolute -right-2 md:right-4 bottom-12 animate-float-slow"
               style={{ animationDelay: "1.5s" }}
               icon={<TrendingUp className="h-4 w-4 text-[#f5d76e]" />}
-              title="Conversión"
+              title={t("hero.card.conv")}
               value="+342%"
             />
           </div>
@@ -282,11 +282,11 @@ function Hero() {
 
         <Reveal delay={500}>
           <div className="mt-16 flex flex-wrap items-center justify-center gap-x-10 gap-y-4 text-xs uppercase tracking-[0.2em] text-white/30">
-            <span>Apple-grade craft</span>
+            <span>{t("hero.tag.1")}</span>
             <span className="h-1 w-1 rounded-full bg-white/20" />
-            <span>Stripe-level performance</span>
+            <span>{t("hero.tag.2")}</span>
             <span className="h-1 w-1 rounded-full bg-white/20" />
-            <span>Tesla-style innovation</span>
+            <span>{t("hero.tag.3")}</span>
           </div>
         </Reveal>
       </div>
