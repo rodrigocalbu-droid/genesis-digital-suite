@@ -512,6 +512,7 @@ function Portfolio() {
 }
 
 function AutomationsAI() {
+  const { t } = useLang();
   return (
     <section id="ia" className="relative py-28 overflow-hidden">
       <div className="absolute inset-0 -z-10 radial-glow opacity-60" />
@@ -520,33 +521,28 @@ function AutomationsAI() {
           <Reveal>
             <div>
               <div className="inline-flex items-center gap-2 rounded-full glass px-3 py-1 text-xs text-white/70">
-                <span className="h-1 w-1 rounded-full bg-[#3b82f6]" /> Automatizaciones IA
+                <span className="h-1 w-1 rounded-full bg-[#3b82f6]" /> {t("ia.eyebrow")}
               </div>
               <h2 className="font-display mt-5 text-4xl md:text-5xl lg:text-6xl font-semibold tracking-tight leading-[1.05]">
-                Automatizamos procesos para que tu negocio{" "}
-                <span className="text-gradient-gold">trabaje incluso cuando dormís</span>.
+                {t("ia.title.1")}{" "}
+                <span className="text-gradient-gold">{t("ia.title.2")}</span>.
               </h2>
               <p className="mt-6 text-white/60 text-lg leading-relaxed">
-                Conectamos tus herramientas, datos y canales en flujos inteligentes. Lo que antes tomaba horas, ahora ocurre en segundos.
+                {t("ia.subtitle")}
               </p>
               <ul className="mt-8 space-y-3">
-                {[
-                  "Captura y calificación automática de leads",
-                  "Respuestas con IA en WhatsApp, Instagram y email",
-                  "Reportes que se generan y envían solos",
-                  "Integraciones con CRM, pagos, calendarios y más",
-                ].map((t) => (
-                  <li key={t} className="flex items-start gap-3 text-white/75">
+                {[t("ia.l1"), t("ia.l2"), t("ia.l3"), t("ia.l4")].map((line) => (
+                  <li key={line} className="flex items-start gap-3 text-white/75">
                     <span className="mt-0.5 grid place-items-center h-5 w-5 rounded-full bg-[#3b82f6]/20 border border-[#3b82f6]/40">
                       <Check className="h-3 w-3 text-[#7dd3fc]" />
                     </span>
-                    {t}
+                    {line}
                   </li>
                 ))}
               </ul>
               <a href={WHATSAPP_URL} target="_blank" rel="noreferrer"
                 className="mt-10 inline-flex items-center gap-2 rounded-full bg-white text-black px-6 py-3 text-sm font-medium hover:scale-[1.02] transition glow-gold">
-                Automatizar mi negocio <ArrowRight className="h-4 w-4" />
+                {t("ia.cta")} <ArrowRight className="h-4 w-4" />
               </a>
             </div>
           </Reveal>
