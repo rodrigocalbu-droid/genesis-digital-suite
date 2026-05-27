@@ -107,6 +107,7 @@ function Logo({ className = "" }: { className?: string }) {
 
 function Nav() {
   const [scrolled, setScrolled] = useState(false);
+  const { t } = useLang();
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener("scroll", onScroll);
@@ -126,23 +127,77 @@ function Nav() {
         >
           <Logo />
           <nav className="hidden md:flex items-center gap-8 text-sm text-white/70">
-            <a href="#servicios" className="hover:text-white transition">Servicios</a>
-            <a href="#por-que" className="hover:text-white transition">Por qué</a>
-            <a href="#proyectos" className="hover:text-white transition">Proyectos</a>
-            <a href="#ia" className="hover:text-white transition">Automatizaciones</a>
-            <a href="#contacto" className="hover:text-white transition">Contacto</a>
+            <a href="#servicios" className="hover:text-white transition">{t("nav.services")}</a>
+            <a href="#por-que" className="hover:text-white transition">{t("nav.why")}</a>
+            <a href="#proyectos" className="hover:text-white transition">{t("nav.projects")}</a>
+            <a href="#ia" className="hover:text-white transition">{t("nav.automations")}</a>
+            <a href="#contacto" className="hover:text-white transition">{t("nav.contact")}</a>
           </nav>
-          <a
-            href={WHATSAPP_URL}
-            target="_blank"
-            rel="noreferrer"
-            className="hidden sm:inline-flex items-center gap-2 rounded-full bg-white text-black text-sm font-medium px-4 py-2 hover:bg-white/90 transition"
-          >
-            WhatsApp <ArrowUpRight className="h-3.5 w-3.5" />
-          </a>
+          <div className="flex items-center gap-2">
+            <LangSwitcher />
+            <a
+              href={WHATSAPP_URL}
+              target="_blank"
+              rel="noreferrer"
+              className="hidden sm:inline-flex items-center gap-2 rounded-full bg-white text-black text-sm font-medium px-4 py-2 hover:bg-white/90 transition"
+            >
+              {t("nav.whatsapp")} <ArrowUpRight className="h-3.5 w-3.5" />
+            </a>
+          </div>
         </div>
       </div>
     </header>
+  );
+}
+
+function LangSwitcher() {
+  const { lang, setLang } = useLang();
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const onClick = (e: MouseEvent) => {
+      if (!ref.current?.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener("click", onClick);
+    return () => document.removeEventListener("click", onClick);
+  }, []);
+  const opts: { code: Lang; label: string; flag: string }[] = [
+    { code: "es", label: "Español", flag: "🇪🇸" },
+    { code: "pt", label: "Português", flag: "🇧🇷" },
+    { code: "en", label: "English", flag: "🇺🇸" },
+  ];
+  const current = opts.find((o) => o.code === lang)!;
+  return (
+    <div ref={ref} className="relative">
+      <button
+        onClick={() => setOpen((v) => !v)}
+        className="inline-flex items-center gap-1.5 rounded-full glass-strong px-3 py-2 text-xs font-medium text-white/80 hover:text-white hover:bg-white/10 transition"
+        aria-label="Change language"
+      >
+        <Globe className="h-3.5 w-3.5" />
+        <span className="hidden sm:inline">{current.flag}</span>
+        <span className="uppercase tracking-wider">{current.code}</span>
+      </button>
+      {open && (
+        <div className="absolute right-0 mt-2 min-w-[160px] rounded-xl glass-strong border border-white/10 overflow-hidden shadow-2xl">
+          {opts.map((o) => (
+            <button
+              key={o.code}
+              onClick={() => {
+                setLang(o.code);
+                setOpen(false);
+              }}
+              className={`w-full flex items-center gap-2 px-3 py-2 text-left text-sm transition ${
+                o.code === lang ? "bg-white/10 text-white" : "text-white/70 hover:bg-white/5 hover:text-white"
+              }`}
+            >
+              <span>{o.flag}</span>
+              <span>{o.label}</span>
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
   );
 }
 
