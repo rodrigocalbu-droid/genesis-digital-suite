@@ -586,52 +586,127 @@ function FlowDiagram() {
   );
 }
 
-const TESTIMONIALS = [
+type Testimonial = {
+  name: string;
+  role: string;
+  initials: string;
+  rating: number;
+  text: { es: string; pt: string; en: string };
+  lang: Lang; // idioma "original" en que se muestra siempre
+};
+
+const TESTIMONIALS: Testimonial[] = [
   {
     name: "Lucía Fernández",
     role: "CEO · Atlas Studio",
-    text: "GENESIS rediseñó nuestra web y automatizó la captación de leads. En 60 días triplicamos consultas calificadas.",
     initials: "LF",
+    rating: 5,
+    lang: "es",
+    text: {
+      es: "Cumplieron con todo lo prometido y un poco más. La web quedó muy bien y las consultas crecieron bastante. Hubo un par de cambios pedidos sobre la marcha y los resolvieron rápido.",
+      pt: "Cumpriram tudo o prometido e um pouco mais. O site ficou ótimo e os contatos cresceram bastante. Tivemos alguns ajustes no caminho e foram resolvidos rápido.",
+      en: "They delivered everything promised, and a bit more. The site turned out really nice and inquiries grew a lot. A couple of last-minute changes were handled quickly.",
+    },
   },
   {
-    name: "Mateo Álvarez",
-    role: "Founder · Nova Store",
-    text: "El bot de WhatsApp atiende solo el 80% de las consultas. Recuperamos horas y vendemos más. Inversión recuperada en semanas.",
-    initials: "MA",
+    name: "Rafael Souza",
+    role: "Founder · Loja Boreal",
+    initials: "RS",
+    rating: 4,
+    lang: "pt",
+    text: {
+      pt: "O bot do WhatsApp ajudou demais no atendimento, hoje resolve a maior parte das dúvidas sozinho. Ainda tem coisas pra ajustar, mas o suporte é atencioso e entrega no prazo.",
+      es: "El bot de WhatsApp ayudó muchísimo con la atención, hoy resuelve la mayoría de las dudas solo. Todavía quedan cosas para ajustar, pero el soporte es atento y cumple los plazos.",
+      en: "The WhatsApp bot really helped our support, it handles most questions on its own now. There are still things to tweak, but the team is attentive and meets deadlines.",
+    },
   },
   {
     name: "Camila Rossi",
     role: "Marketing · Apex Group",
-    text: "Trabajan con un nivel premium que rara vez se ve. Diseño, ejecución y estrategia, todo de primera.",
     initials: "CR",
+    rating: 3,
+    lang: "es",
+    text: {
+      es: "El diseño final nos gustó y se nota el trabajo. La comunicación al principio fue un poco lenta y nos costó alinear expectativas, pero el resultado terminó siendo bueno.",
+      pt: "Gostamos do design final e dá pra notar o trabalho. A comunicação no começo foi um pouco lenta e custou alinhar expectativas, mas o resultado acabou sendo bom.",
+      en: "We liked the final design and the craft shows. Communication was a bit slow at first and aligning expectations took effort, but the result ended up being good.",
+    },
+  },
+  {
+    name: "João Pereira",
+    role: "Diretor · NorteTech",
+    initials: "JP",
+    rating: 5,
+    lang: "pt",
+    text: {
+      pt: "Automatizaram processos internos que tomavam horas todo dia. A equipe sobrou tempo pra focar em vender. Recomendo, muito profissionais.",
+      es: "Automatizaron procesos internos que nos tomaban horas todos los días. El equipo ganó tiempo para enfocarse en vender. Los recomiendo, muy profesionales.",
+      en: "They automated internal processes that used to take hours every day. The team freed up time to focus on selling. Highly recommend, very professional.",
+    },
+  },
+  {
+    name: "Mateo Álvarez",
+    role: "Founder · Nova Store",
+    initials: "MA",
+    rating: 4,
+    lang: "es",
+    text: {
+      es: "Buena experiencia en general. El funnel mejoró las conversiones y vimos resultados en pocas semanas. Algunas integraciones llevaron más tiempo del esperado, pero funcionan bien.",
+      pt: "Boa experiência no geral. O funil melhorou as conversões e vimos resultados em poucas semanas. Algumas integrações demoraram mais do que o esperado, mas funcionam bem.",
+      en: "Solid experience overall. The funnel improved conversions and we saw results within weeks. Some integrations took longer than expected, but they work well.",
+    },
+  },
+  {
+    name: "Beatriz Lima",
+    role: "COO · Studio Verão",
+    initials: "BL",
+    rating: 5,
+    lang: "pt",
+    text: {
+      pt: "Trabalho de alto nível. Entenderam a nossa marca rápido e entregaram algo do qual a gente se orgulha de mostrar. Vamos seguir trabalhando juntos.",
+      es: "Trabajo de alto nivel. Entendieron nuestra marca rápido y entregaron algo que nos enorgullece mostrar. Vamos a seguir trabajando juntos.",
+      en: "High-level work. They understood our brand quickly and delivered something we're proud to show. We'll keep working with them.",
+    },
   },
 ];
 
 function Testimonials() {
+  const { t, lang } = useLang();
   return (
     <section className="relative py-28">
       <div className="mx-auto max-w-7xl px-6">
         <Reveal>
           <SectionHeader
-            eyebrow="Testimonios"
-            title={<>Lo que dicen las marcas que <span className="text-gradient-gold">eligieron evolucionar</span>.</>}
+            eyebrow={t("tst.eyebrow")}
+            title={<>{t("tst.title.1")} <span className="text-gradient-gold">{t("tst.title.2")}</span>.</>}
           />
         </Reveal>
-        <div className="mt-14 grid gap-5 md:grid-cols-3">
-          {TESTIMONIALS.map((t, i) => (
-            <Reveal key={t.name} delay={i * 100}>
+        <div className="mt-14 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+          {TESTIMONIALS.map((tst, i) => (
+            <Reveal key={tst.name} delay={i * 100}>
               <figure className="glass rounded-2xl p-7 h-full flex flex-col">
-                <div className="flex gap-0.5 text-[#f5d76e]">
-                  {Array.from({ length: 5 }).map((_, k) => <Star key={k} className="h-4 w-4 fill-current" />)}
+                <div className="flex items-center gap-0.5">
+                  {Array.from({ length: 5 }).map((_, k) => (
+                    <Star
+                      key={k}
+                      className={`h-4 w-4 ${k < tst.rating ? "text-[#f5d76e] fill-current" : "text-white/15"}`}
+                    />
+                  ))}
+                  <span className="ml-2 text-xs text-white/40">{tst.rating}.0</span>
                 </div>
-                <blockquote className="mt-5 text-white/80 leading-relaxed">"{t.text}"</blockquote>
+                <blockquote className="mt-5 text-white/80 leading-relaxed">
+                  "{tst.text[lang]}"
+                </blockquote>
                 <figcaption className="mt-6 flex items-center gap-3">
                   <span className="grid place-items-center h-10 w-10 rounded-full bg-gradient-to-br from-[#3b82f6] to-[#1e3a8a] text-sm font-medium">
-                    {t.initials}
+                    {tst.initials}
                   </span>
-                  <span>
-                    <div className="text-sm font-medium text-white">{t.name}</div>
-                    <div className="text-xs text-white/50">{t.role}</div>
+                  <span className="flex-1">
+                    <div className="text-sm font-medium text-white">{tst.name}</div>
+                    <div className="text-xs text-white/50">{tst.role}</div>
+                  </span>
+                  <span className="text-[10px] uppercase tracking-widest text-white/30 border border-white/10 rounded-full px-2 py-0.5">
+                    {tst.lang}
                   </span>
                 </figcaption>
               </figure>
