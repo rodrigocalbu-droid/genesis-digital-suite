@@ -403,6 +403,7 @@ function Stat({ value, suffix, label, start }: { value: number; suffix: string; 
 function WhyGenesis() {
   const ref = useRef<HTMLDivElement>(null);
   const [start, setStart] = useState(false);
+  const { t } = useLang();
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
@@ -412,10 +413,10 @@ function WhyGenesis() {
   }, []);
 
   const pillars = [
-    { icon: Rocket, title: "Velocidad real", desc: "Procesos ágiles, sin vueltas. Entregas medidas en días, no en meses." },
-    { icon: Brain, title: "IA aplicada", desc: "No vendemos buzzwords: implementamos IA que mueve la aguja." },
-    { icon: Shield, title: "Calidad premium", desc: "Diseño cuidado al detalle y código pensado para escalar." },
-    { icon: TrendingUp, title: "Foco en ventas", desc: "Cada decisión se toma para que tu negocio facture más." },
+    { icon: Rocket, k: "p1" },
+    { icon: Brain, k: "p2" },
+    { icon: Shield, k: "p3" },
+    { icon: TrendingUp, k: "p4" },
   ];
 
   return (
@@ -426,19 +427,19 @@ function WhyGenesis() {
       <div className="mx-auto max-w-7xl px-6">
         <Reveal>
           <SectionHeader
-            eyebrow="Por qué GENESIS"
-            title={<>No somos una agencia más.<br/>Somos tu <span className="text-gradient-gold">ventaja competitiva</span>.</>}
-            subtitle="Combinamos diseño premium, ingeniería sólida e inteligencia artificial para construir empresas del futuro."
+            eyebrow={t("why.eyebrow")}
+            title={<>{t("why.title.1")}<br/>{t("why.title.2")} <span className="text-gradient-gold">{t("why.title.3")}</span>.</>}
+            subtitle={t("why.subtitle")}
           />
         </Reveal>
 
         <div className="mt-16 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
           {pillars.map((p, i) => (
-            <Reveal key={p.title} delay={i * 80}>
+            <Reveal key={p.k} delay={i * 80}>
               <div className="glass rounded-2xl p-6 h-full hover:bg-white/[0.05] transition">
                 <p.icon className="h-6 w-6 text-[#f5d76e]" />
-                <h3 className="font-display text-lg mt-4 font-medium">{p.title}</h3>
-                <p className="mt-2 text-sm text-white/55 leading-relaxed">{p.desc}</p>
+                <h3 className="font-display text-lg mt-4 font-medium">{t(`why.${p.k}.t`)}</h3>
+                <p className="mt-2 text-sm text-white/55 leading-relaxed">{t(`why.${p.k}.d`)}</p>
               </div>
             </Reveal>
           ))}
@@ -446,10 +447,10 @@ function WhyGenesis() {
 
         <div ref={ref} className="mt-20 rounded-3xl glass-strong p-10 md:p-14">
           <div className="grid gap-10 md:grid-cols-4">
-            <Stat value={50} suffix="+" label="Proyectos entregados" start={start} />
-            <Stat value={100} suffix="+" label="Automatizaciones activas" start={start} />
-            <Stat value={1000} suffix="+" label="Horas ahorradas a clientes" start={start} />
-            <Stat value={98} suffix="%" label="Clientes satisfechos" start={start} />
+            <Stat value={50} suffix="+" label={t("why.s1")} start={start} />
+            <Stat value={100} suffix="+" label={t("why.s2")} start={start} />
+            <Stat value={1000} suffix="+" label={t("why.s3")} start={start} />
+            <Stat value={98} suffix="%" label={t("why.s4")} start={start} />
           </div>
         </div>
       </div>
