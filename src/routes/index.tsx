@@ -23,6 +23,7 @@ import {
   Mail,
   Linkedin,
   Twitter,
+  Globe,
 } from "lucide-react";
 import heroImg from "../assets/hero.jpg";
 import automationImg from "../assets/automation.jpg";
@@ -30,6 +31,7 @@ import project1 from "../assets/project1.jpg";
 import project2 from "../assets/project2.jpg";
 import project3 from "../assets/project3.jpg";
 import project4 from "../assets/project4.jpg";
+import { LanguageProvider, useLang, type Lang } from "@/lib/i18n";
 
 const WHATSAPP_URL = "https://wa.me/5491100000000?text=Hola%20GENESIS%2C%20quiero%20info";
 
