@@ -322,33 +322,34 @@ function FloatingCard({
 }
 
 const SERVICES = [
-  { icon: Code2, title: "Desarrollo web", desc: "Sitios premium hechos a medida, ultrarrápidos y optimizados para SEO." },
-  { icon: LayoutDashboard, title: "Landing pages", desc: "Páginas de aterrizaje pensadas para convertir visitas en clientes." },
-  { icon: ShoppingBag, title: "Tiendas online", desc: "E-commerce profesional con pagos, envíos y panel de control." },
-  { icon: Cpu, title: "Automatizaciones IA", desc: "Workflows con inteligencia artificial que reemplazan tareas manuales." },
-  { icon: MessageCircle, title: "Bots de WhatsApp", desc: "Atención 24/7, calificación de leads y ventas automáticas." },
-  { icon: Workflow, title: "Automatización de negocios", desc: "Conectamos áreas y procesos para que tu empresa fluya sola." },
-  { icon: Plug, title: "Integración de sistemas", desc: "CRMs, ERPs, pagos, calendarios, emails — todo conversando entre sí." },
-  { icon: Palette, title: "Diseño UX/UI", desc: "Interfaces elegantes, intuitivas y centradas en el usuario." },
-  { icon: TrendingUp, title: "Funnels de venta", desc: "Embudos diseñados para escalar resultados de forma predecible." },
-  { icon: Zap, title: "Optimización digital", desc: "Velocidad, performance y conversión llevadas al máximo." },
+  { icon: Code2, key: "web" },
+  { icon: LayoutDashboard, key: "landing" },
+  { icon: ShoppingBag, key: "store" },
+  { icon: Cpu, key: "ai" },
+  { icon: MessageCircle, key: "bot" },
+  { icon: Workflow, key: "biz" },
+  { icon: Plug, key: "int" },
+  { icon: Palette, key: "ux" },
+  { icon: TrendingUp, key: "funnel" },
+  { icon: Zap, key: "opt" },
 ];
 
 function Services() {
+  const { t } = useLang();
   return (
     <section id="servicios" className="relative py-28">
       <div className="mx-auto max-w-7xl px-6">
         <Reveal>
           <SectionHeader
-            eyebrow="Qué hacemos"
-            title={<>Tecnología que <span className="text-gradient-electric">crea ventaja</span> real.</>}
-            subtitle="Soluciones integrales para marcas que quieren liderar su mercado."
+            eyebrow={t("services.eyebrow")}
+            title={<>{t("services.title.1")} <span className="text-gradient-electric">{t("services.title.2")}</span> {t("services.title.3")}</>}
+            subtitle={t("services.subtitle")}
           />
         </Reveal>
 
         <div className="mt-16 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {SERVICES.map((s, i) => (
-            <Reveal key={s.title} delay={i * 60}>
+            <Reveal key={s.key} delay={i * 60}>
               <div className="group relative glass rounded-2xl p-7 h-full transition hover:-translate-y-1 hover:bg-white/[0.06]">
                 <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition pointer-events-none"
                   style={{ background: "radial-gradient(400px circle at 50% 0%, rgba(59,130,246,0.12), transparent 60%)" }} />
@@ -356,11 +357,11 @@ function Services() {
                   <div className="inline-flex items-center justify-center h-12 w-12 rounded-xl bg-gradient-to-br from-white/10 to-white/[0.02] border border-white/10 mb-5">
                     <s.icon className="h-5 w-5 text-[#7dd3fc] group-hover:text-[#f5d76e] transition" />
                   </div>
-                  <h3 className="font-display text-xl font-medium text-white">{s.title}</h3>
-                  <p className="mt-2 text-sm text-white/55 leading-relaxed">{s.desc}</p>
+                  <h3 className="font-display text-xl font-medium text-white">{t(`svc.${s.key}`)}</h3>
+                  <p className="mt-2 text-sm text-white/55 leading-relaxed">{t(`svc.${s.key}.d`)}</p>
                   <a href={WHATSAPP_URL} target="_blank" rel="noreferrer"
                     className="mt-5 inline-flex items-center gap-1.5 text-xs text-white/50 group-hover:text-white transition">
-                    Pedir presupuesto <ArrowRight className="h-3 w-3" />
+                    {t("services.quote")} <ArrowRight className="h-3 w-3" />
                   </a>
                 </div>
               </div>
