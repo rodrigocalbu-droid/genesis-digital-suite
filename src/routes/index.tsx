@@ -719,6 +719,7 @@ function Testimonials() {
 }
 
 function FinalCTA() {
+  const { t } = useLang();
   return (
     <section id="contacto" className="relative py-32 overflow-hidden">
       <div className="absolute inset-0 -z-10">
@@ -728,29 +729,28 @@ function FinalCTA() {
       <div className="mx-auto max-w-5xl px-6 text-center">
         <Reveal>
           <h2 className="font-display text-5xl md:text-7xl lg:text-8xl font-semibold tracking-tight leading-[1.02]">
-            Tu negocio necesita{" "}
-            <span className="text-gradient-electric">evolucionar</span>.
+            {t("cta.title.1")}{" "}
+            <span className="text-gradient-electric">{t("cta.title.2")}</span>.
           </h2>
         </Reveal>
         <Reveal delay={150}>
           <p className="mt-7 text-white/60 text-lg md:text-xl max-w-2xl mx-auto">
-            La diferencia entre crecer o quedar atrás está en la tecnología.
-            Empezá hoy y dejá que la próxima década te encuentre listo.
+            {t("cta.sub")}
           </p>
         </Reveal>
         <Reveal delay={300}>
           <div className="mt-12 flex flex-col sm:flex-row items-center justify-center gap-3">
             <a href={WHATSAPP_URL} target="_blank" rel="noreferrer"
               className="inline-flex items-center justify-center gap-2 rounded-full bg-white text-black px-7 py-4 text-base font-medium hover:scale-[1.02] transition glow-electric">
-              <Code2 className="h-4 w-4" /> Quiero mi página web
+              <Code2 className="h-4 w-4" /> {t("cta.b1")}
             </a>
             <a href={WHATSAPP_URL} target="_blank" rel="noreferrer"
               className="inline-flex items-center justify-center gap-2 rounded-full glass-strong text-white px-7 py-4 text-base font-medium hover:bg-white/10 transition">
-              <Cpu className="h-4 w-4" /> Automatizar mi negocio
+              <Cpu className="h-4 w-4" /> {t("cta.b2")}
             </a>
             <a href={WHATSAPP_URL} target="_blank" rel="noreferrer"
               className="inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-[#f5d76e] to-[#d4a418] text-black px-7 py-4 text-base font-medium hover:scale-[1.02] transition glow-gold">
-              <MessageCircle className="h-4 w-4" /> Hablar por WhatsApp
+              <MessageCircle className="h-4 w-4" /> {t("cta.b3")}
             </a>
           </div>
         </Reveal>
@@ -760,6 +760,7 @@ function FinalCTA() {
 }
 
 function Footer() {
+  const { t } = useLang();
   return (
     <footer className="relative border-t border-white/10 pt-16 pb-10">
       <div className="mx-auto max-w-7xl px-6">
@@ -767,7 +768,7 @@ function Footer() {
           <div className="md:col-span-2">
             <Logo />
             <p className="mt-5 max-w-md text-sm text-white/55 leading-relaxed">
-              GENESIS — Sistemas digitales inteligentes. Web premium, IA, automatización y soluciones para marcas modernas.
+              {t("ft.desc")}
             </p>
             <div className="mt-6 flex items-center gap-3">
               {[
@@ -785,27 +786,27 @@ function Footer() {
             </div>
           </div>
           <div>
-            <h4 className="text-xs uppercase tracking-widest text-white/40">Servicios</h4>
+            <h4 className="text-xs uppercase tracking-widest text-white/40">{t("ft.services")}</h4>
             <ul className="mt-4 space-y-2 text-sm text-white/70">
-              <li><a href="#servicios" className="hover:text-white">Desarrollo web</a></li>
-              <li><a href="#servicios" className="hover:text-white">Automatizaciones IA</a></li>
-              <li><a href="#servicios" className="hover:text-white">Bots de WhatsApp</a></li>
-              <li><a href="#servicios" className="hover:text-white">Funnels de venta</a></li>
+              <li><a href="#servicios" className="hover:text-white">{t("svc.web")}</a></li>
+              <li><a href="#servicios" className="hover:text-white">{t("svc.ai")}</a></li>
+              <li><a href="#servicios" className="hover:text-white">{t("svc.bot")}</a></li>
+              <li><a href="#servicios" className="hover:text-white">{t("svc.funnel")}</a></li>
             </ul>
           </div>
           <div>
-            <h4 className="text-xs uppercase tracking-widest text-white/40">Empresa</h4>
+            <h4 className="text-xs uppercase tracking-widest text-white/40">{t("ft.company")}</h4>
             <ul className="mt-4 space-y-2 text-sm text-white/70">
-              <li><a href="#proyectos" className="hover:text-white">Proyectos</a></li>
-              <li><a href="#por-que" className="hover:text-white">Por qué GENESIS</a></li>
-              <li><a href="#contacto" className="hover:text-white">Contacto</a></li>
-              <li><a href={WHATSAPP_URL} target="_blank" rel="noreferrer" className="hover:text-white">WhatsApp</a></li>
+              <li><a href="#proyectos" className="hover:text-white">{t("nav.projects")}</a></li>
+              <li><a href="#por-que" className="hover:text-white">{t("ft.why")}</a></li>
+              <li><a href="#contacto" className="hover:text-white">{t("nav.contact")}</a></li>
+              <li><a href={WHATSAPP_URL} target="_blank" rel="noreferrer" className="hover:text-white">{t("nav.whatsapp")}</a></li>
             </ul>
           </div>
         </div>
         <div className="mt-12 flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-white/10 pt-8 text-xs text-white/40">
-          <span>© {new Date().getFullYear()} GENESIS. Todos los derechos reservados.</span>
-          <span>Diseñado para marcas que no se conforman.</span>
+          <span>© {new Date().getFullYear()} GENESIS. {t("ft.rights")}</span>
+          <span>{t("ft.tag")}</span>
         </div>
       </div>
     </footer>
@@ -813,32 +814,35 @@ function Footer() {
 }
 
 function FloatingWhatsApp() {
+  const { t } = useLang();
   return (
     <a href={WHATSAPP_URL} target="_blank" rel="noreferrer" aria-label="WhatsApp"
       className="fixed bottom-6 right-6 z-50 inline-flex items-center gap-2 rounded-full bg-[#25D366] text-black pl-3 pr-5 py-3 font-medium shadow-2xl shadow-[#25D366]/30 hover:scale-105 transition">
       <span className="grid place-items-center h-8 w-8 rounded-full bg-black/10">
         <MessageCircle className="h-4 w-4" />
       </span>
-      <span className="hidden sm:inline text-sm">Hablemos</span>
+      <span className="hidden sm:inline text-sm">{t("fab.chat")}</span>
     </a>
   );
 }
 
 function Landing() {
   return (
-    <div className="min-h-screen bg-background text-foreground antialiased">
-      <Nav />
-      <main>
-        <Hero />
-        <Services />
-        <WhyGenesis />
-        <Portfolio />
-        <AutomationsAI />
-        <Testimonials />
-        <FinalCTA />
-      </main>
-      <Footer />
-      <FloatingWhatsApp />
-    </div>
+    <LanguageProvider>
+      <div className="min-h-screen bg-background text-foreground antialiased">
+        <Nav />
+        <main>
+          <Hero />
+          <Services />
+          <WhyGenesis />
+          <Portfolio />
+          <AutomationsAI />
+          <Testimonials />
+          <FinalCTA />
+        </main>
+        <Footer />
+        <FloatingWhatsApp />
+      </div>
+    </LanguageProvider>
   );
 }
