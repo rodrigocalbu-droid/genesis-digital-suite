@@ -23,6 +23,7 @@ import {
   Mail,
   Linkedin,
   Twitter,
+  Globe,
 } from "lucide-react";
 import heroImg from "../assets/hero.jpg";
 import automationImg from "../assets/automation.jpg";
@@ -30,6 +31,7 @@ import project1 from "../assets/project1.jpg";
 import project2 from "../assets/project2.jpg";
 import project3 from "../assets/project3.jpg";
 import project4 from "../assets/project4.jpg";
+import { LanguageProvider, useLang, type Lang } from "@/lib/i18n";
 
 const WHATSAPP_URL = "https://wa.me/5491100000000?text=Hola%20GENESIS%2C%20quiero%20info";
 
@@ -105,6 +107,7 @@ function Logo({ className = "" }: { className?: string }) {
 
 function Nav() {
   const [scrolled, setScrolled] = useState(false);
+  const { t } = useLang();
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener("scroll", onScroll);
@@ -124,27 +127,82 @@ function Nav() {
         >
           <Logo />
           <nav className="hidden md:flex items-center gap-8 text-sm text-white/70">
-            <a href="#servicios" className="hover:text-white transition">Servicios</a>
-            <a href="#por-que" className="hover:text-white transition">Por qué</a>
-            <a href="#proyectos" className="hover:text-white transition">Proyectos</a>
-            <a href="#ia" className="hover:text-white transition">Automatizaciones</a>
-            <a href="#contacto" className="hover:text-white transition">Contacto</a>
+            <a href="#servicios" className="hover:text-white transition">{t("nav.services")}</a>
+            <a href="#por-que" className="hover:text-white transition">{t("nav.why")}</a>
+            <a href="#proyectos" className="hover:text-white transition">{t("nav.projects")}</a>
+            <a href="#ia" className="hover:text-white transition">{t("nav.automations")}</a>
+            <a href="#contacto" className="hover:text-white transition">{t("nav.contact")}</a>
           </nav>
-          <a
-            href={WHATSAPP_URL}
-            target="_blank"
-            rel="noreferrer"
-            className="hidden sm:inline-flex items-center gap-2 rounded-full bg-white text-black text-sm font-medium px-4 py-2 hover:bg-white/90 transition"
-          >
-            WhatsApp <ArrowUpRight className="h-3.5 w-3.5" />
-          </a>
+          <div className="flex items-center gap-2">
+            <LangSwitcher />
+            <a
+              href={WHATSAPP_URL}
+              target="_blank"
+              rel="noreferrer"
+              className="hidden sm:inline-flex items-center gap-2 rounded-full bg-white text-black text-sm font-medium px-4 py-2 hover:bg-white/90 transition"
+            >
+              {t("nav.whatsapp")} <ArrowUpRight className="h-3.5 w-3.5" />
+            </a>
+          </div>
         </div>
       </div>
     </header>
   );
 }
 
+function LangSwitcher() {
+  const { lang, setLang } = useLang();
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const onClick = (e: MouseEvent) => {
+      if (!ref.current?.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener("click", onClick);
+    return () => document.removeEventListener("click", onClick);
+  }, []);
+  const opts: { code: Lang; label: string; flag: string }[] = [
+    { code: "es", label: "Español", flag: "🇪🇸" },
+    { code: "pt", label: "Português", flag: "🇧🇷" },
+    { code: "en", label: "English", flag: "🇺🇸" },
+  ];
+  const current = opts.find((o) => o.code === lang)!;
+  return (
+    <div ref={ref} className="relative">
+      <button
+        onClick={() => setOpen((v) => !v)}
+        className="inline-flex items-center gap-1.5 rounded-full glass-strong px-3 py-2 text-xs font-medium text-white/80 hover:text-white hover:bg-white/10 transition"
+        aria-label="Change language"
+      >
+        <Globe className="h-3.5 w-3.5" />
+        <span className="hidden sm:inline">{current.flag}</span>
+        <span className="uppercase tracking-wider">{current.code}</span>
+      </button>
+      {open && (
+        <div className="absolute right-0 mt-2 min-w-[160px] rounded-xl glass-strong border border-white/10 overflow-hidden shadow-2xl">
+          {opts.map((o) => (
+            <button
+              key={o.code}
+              onClick={() => {
+                setLang(o.code);
+                setOpen(false);
+              }}
+              className={`w-full flex items-center gap-2 px-3 py-2 text-left text-sm transition ${
+                o.code === lang ? "bg-white/10 text-white" : "text-white/70 hover:bg-white/5 hover:text-white"
+              }`}
+            >
+              <span>{o.flag}</span>
+              <span>{o.label}</span>
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 function Hero() {
+  const { t } = useLang();
   return (
     <section id="top" className="relative pt-36 pb-24 md:pt-44 md:pb-32 overflow-hidden">
       <div className="absolute inset-0 -z-10 radial-glow" />
@@ -154,23 +212,22 @@ function Hero() {
           <div className="flex justify-center">
             <span className="inline-flex items-center gap-2 rounded-full glass px-4 py-1.5 text-xs text-white/80">
               <span className="h-1.5 w-1.5 rounded-full bg-[#3b82f6] animate-pulse-glow" />
-              Agencia digital · IA · Automatización
+              {t("hero.badge")}
             </span>
           </div>
         </Reveal>
         <Reveal delay={100}>
           <h1 className="font-display mt-8 text-center text-5xl md:text-7xl lg:text-[88px] leading-[1.02] font-semibold tracking-tight">
-            Transformamos negocios
+            {t("hero.title.1")}
             <br className="hidden md:block" />{" "}
-            tradicionales en{" "}
-            <span className="text-gradient-electric">sistemas digitales</span>{" "}
-            <span className="text-gradient-gold">inteligentes</span>.
+            {t("hero.title.2")}{" "}
+            <span className="text-gradient-electric">{t("hero.title.3")}</span>{" "}
+            <span className="text-gradient-gold">{t("hero.title.4")}</span>.
           </h1>
         </Reveal>
         <Reveal delay={200}>
           <p className="mx-auto mt-7 max-w-2xl text-center text-base md:text-lg text-white/60 leading-relaxed">
-            Creamos páginas web, automatizaciones y soluciones digitales que hacen crecer marcas
-            modernas. Diseño premium, código limpio, resultados medibles.
+            {t("hero.subtitle")}
           </p>
         </Reveal>
         <Reveal delay={300}>
@@ -182,14 +239,14 @@ function Hero() {
               className="group relative inline-flex items-center justify-center gap-2 rounded-full bg-white text-black px-7 py-3.5 text-sm font-medium transition hover:scale-[1.02] glow-electric"
             >
               <MessageCircle className="h-4 w-4" />
-              Hablar por WhatsApp
+              {t("hero.cta.whatsapp")}
               <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
             </a>
             <a
               href="#proyectos"
               className="inline-flex items-center justify-center gap-2 rounded-full glass-strong px-7 py-3.5 text-sm font-medium text-white hover:bg-white/10 transition"
             >
-              Ver proyectos
+              {t("hero.cta.projects")}
               <ArrowUpRight className="h-4 w-4" />
             </a>
           </div>
@@ -210,14 +267,14 @@ function Hero() {
             <FloatingCard
               className="absolute -left-2 md:left-4 top-10 animate-float-slow"
               icon={<Brain className="h-4 w-4 text-[#7dd3fc]" />}
-              title="IA conectada"
-              value="98% precisión"
+              title={t("hero.card.ai")}
+              value={t("hero.card.ai.value")}
             />
             <FloatingCard
               className="absolute -right-2 md:right-4 bottom-12 animate-float-slow"
               style={{ animationDelay: "1.5s" }}
               icon={<TrendingUp className="h-4 w-4 text-[#f5d76e]" />}
-              title="Conversión"
+              title={t("hero.card.conv")}
               value="+342%"
             />
           </div>
@@ -225,11 +282,11 @@ function Hero() {
 
         <Reveal delay={500}>
           <div className="mt-16 flex flex-wrap items-center justify-center gap-x-10 gap-y-4 text-xs uppercase tracking-[0.2em] text-white/30">
-            <span>Apple-grade craft</span>
+            <span>{t("hero.tag.1")}</span>
             <span className="h-1 w-1 rounded-full bg-white/20" />
-            <span>Stripe-level performance</span>
+            <span>{t("hero.tag.2")}</span>
             <span className="h-1 w-1 rounded-full bg-white/20" />
-            <span>Tesla-style innovation</span>
+            <span>{t("hero.tag.3")}</span>
           </div>
         </Reveal>
       </div>
@@ -265,33 +322,34 @@ function FloatingCard({
 }
 
 const SERVICES = [
-  { icon: Code2, title: "Desarrollo web", desc: "Sitios premium hechos a medida, ultrarrápidos y optimizados para SEO." },
-  { icon: LayoutDashboard, title: "Landing pages", desc: "Páginas de aterrizaje pensadas para convertir visitas en clientes." },
-  { icon: ShoppingBag, title: "Tiendas online", desc: "E-commerce profesional con pagos, envíos y panel de control." },
-  { icon: Cpu, title: "Automatizaciones IA", desc: "Workflows con inteligencia artificial que reemplazan tareas manuales." },
-  { icon: MessageCircle, title: "Bots de WhatsApp", desc: "Atención 24/7, calificación de leads y ventas automáticas." },
-  { icon: Workflow, title: "Automatización de negocios", desc: "Conectamos áreas y procesos para que tu empresa fluya sola." },
-  { icon: Plug, title: "Integración de sistemas", desc: "CRMs, ERPs, pagos, calendarios, emails — todo conversando entre sí." },
-  { icon: Palette, title: "Diseño UX/UI", desc: "Interfaces elegantes, intuitivas y centradas en el usuario." },
-  { icon: TrendingUp, title: "Funnels de venta", desc: "Embudos diseñados para escalar resultados de forma predecible." },
-  { icon: Zap, title: "Optimización digital", desc: "Velocidad, performance y conversión llevadas al máximo." },
+  { icon: Code2, key: "web" },
+  { icon: LayoutDashboard, key: "landing" },
+  { icon: ShoppingBag, key: "store" },
+  { icon: Cpu, key: "ai" },
+  { icon: MessageCircle, key: "bot" },
+  { icon: Workflow, key: "biz" },
+  { icon: Plug, key: "int" },
+  { icon: Palette, key: "ux" },
+  { icon: TrendingUp, key: "funnel" },
+  { icon: Zap, key: "opt" },
 ];
 
 function Services() {
+  const { t } = useLang();
   return (
     <section id="servicios" className="relative py-28">
       <div className="mx-auto max-w-7xl px-6">
         <Reveal>
           <SectionHeader
-            eyebrow="Qué hacemos"
-            title={<>Tecnología que <span className="text-gradient-electric">crea ventaja</span> real.</>}
-            subtitle="Soluciones integrales para marcas que quieren liderar su mercado."
+            eyebrow={t("services.eyebrow")}
+            title={<>{t("services.title.1")} <span className="text-gradient-electric">{t("services.title.2")}</span> {t("services.title.3")}</>}
+            subtitle={t("services.subtitle")}
           />
         </Reveal>
 
         <div className="mt-16 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {SERVICES.map((s, i) => (
-            <Reveal key={s.title} delay={i * 60}>
+            <Reveal key={s.key} delay={i * 60}>
               <div className="group relative glass rounded-2xl p-7 h-full transition hover:-translate-y-1 hover:bg-white/[0.06]">
                 <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition pointer-events-none"
                   style={{ background: "radial-gradient(400px circle at 50% 0%, rgba(59,130,246,0.12), transparent 60%)" }} />
@@ -299,11 +357,11 @@ function Services() {
                   <div className="inline-flex items-center justify-center h-12 w-12 rounded-xl bg-gradient-to-br from-white/10 to-white/[0.02] border border-white/10 mb-5">
                     <s.icon className="h-5 w-5 text-[#7dd3fc] group-hover:text-[#f5d76e] transition" />
                   </div>
-                  <h3 className="font-display text-xl font-medium text-white">{s.title}</h3>
-                  <p className="mt-2 text-sm text-white/55 leading-relaxed">{s.desc}</p>
+                  <h3 className="font-display text-xl font-medium text-white">{t(`svc.${s.key}`)}</h3>
+                  <p className="mt-2 text-sm text-white/55 leading-relaxed">{t(`svc.${s.key}.d`)}</p>
                   <a href={WHATSAPP_URL} target="_blank" rel="noreferrer"
                     className="mt-5 inline-flex items-center gap-1.5 text-xs text-white/50 group-hover:text-white transition">
-                    Pedir presupuesto <ArrowRight className="h-3 w-3" />
+                    {t("services.quote")} <ArrowRight className="h-3 w-3" />
                   </a>
                 </div>
               </div>
@@ -345,6 +403,7 @@ function Stat({ value, suffix, label, start }: { value: number; suffix: string; 
 function WhyGenesis() {
   const ref = useRef<HTMLDivElement>(null);
   const [start, setStart] = useState(false);
+  const { t } = useLang();
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
@@ -354,10 +413,10 @@ function WhyGenesis() {
   }, []);
 
   const pillars = [
-    { icon: Rocket, title: "Velocidad real", desc: "Procesos ágiles, sin vueltas. Entregas medidas en días, no en meses." },
-    { icon: Brain, title: "IA aplicada", desc: "No vendemos buzzwords: implementamos IA que mueve la aguja." },
-    { icon: Shield, title: "Calidad premium", desc: "Diseño cuidado al detalle y código pensado para escalar." },
-    { icon: TrendingUp, title: "Foco en ventas", desc: "Cada decisión se toma para que tu negocio facture más." },
+    { icon: Rocket, k: "p1" },
+    { icon: Brain, k: "p2" },
+    { icon: Shield, k: "p3" },
+    { icon: TrendingUp, k: "p4" },
   ];
 
   return (
@@ -368,19 +427,19 @@ function WhyGenesis() {
       <div className="mx-auto max-w-7xl px-6">
         <Reveal>
           <SectionHeader
-            eyebrow="Por qué GENESIS"
-            title={<>No somos una agencia más.<br/>Somos tu <span className="text-gradient-gold">ventaja competitiva</span>.</>}
-            subtitle="Combinamos diseño premium, ingeniería sólida e inteligencia artificial para construir empresas del futuro."
+            eyebrow={t("why.eyebrow")}
+            title={<>{t("why.title.1")}<br/>{t("why.title.2")} <span className="text-gradient-gold">{t("why.title.3")}</span>.</>}
+            subtitle={t("why.subtitle")}
           />
         </Reveal>
 
         <div className="mt-16 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
           {pillars.map((p, i) => (
-            <Reveal key={p.title} delay={i * 80}>
+            <Reveal key={p.k} delay={i * 80}>
               <div className="glass rounded-2xl p-6 h-full hover:bg-white/[0.05] transition">
                 <p.icon className="h-6 w-6 text-[#f5d76e]" />
-                <h3 className="font-display text-lg mt-4 font-medium">{p.title}</h3>
-                <p className="mt-2 text-sm text-white/55 leading-relaxed">{p.desc}</p>
+                <h3 className="font-display text-lg mt-4 font-medium">{t(`why.${p.k}.t`)}</h3>
+                <p className="mt-2 text-sm text-white/55 leading-relaxed">{t(`why.${p.k}.d`)}</p>
               </div>
             </Reveal>
           ))}
@@ -388,10 +447,10 @@ function WhyGenesis() {
 
         <div ref={ref} className="mt-20 rounded-3xl glass-strong p-10 md:p-14">
           <div className="grid gap-10 md:grid-cols-4">
-            <Stat value={50} suffix="+" label="Proyectos entregados" start={start} />
-            <Stat value={100} suffix="+" label="Automatizaciones activas" start={start} />
-            <Stat value={1000} suffix="+" label="Horas ahorradas a clientes" start={start} />
-            <Stat value={98} suffix="%" label="Clientes satisfechos" start={start} />
+            <Stat value={50} suffix="+" label={t("why.s1")} start={start} />
+            <Stat value={100} suffix="+" label={t("why.s2")} start={start} />
+            <Stat value={1000} suffix="+" label={t("why.s3")} start={start} />
+            <Stat value={98} suffix="%" label={t("why.s4")} start={start} />
           </div>
         </div>
       </div>
@@ -400,25 +459,26 @@ function WhyGenesis() {
 }
 
 const PROJECTS = [
-  { img: project1, name: "Nova Store", cat: "E-commerce premium" },
-  { img: project2, name: "Atlas Analytics", cat: "Dashboard SaaS" },
-  { img: project3, name: "WhatsBot 24/7", cat: "Bot de WhatsApp + IA" },
-  { img: project4, name: "Funnel Apex", cat: "Funnel de ventas" },
+  { img: project1, name: "Nova Store", catKey: "proj.p1.cat" },
+  { img: project2, name: "Atlas Analytics", catKey: "proj.p2.cat" },
+  { img: project3, name: "WhatsBot 24/7", catKey: "proj.p3.cat" },
+  { img: project4, name: "Funnel Apex", catKey: "proj.p4.cat" },
 ];
 
 function Portfolio() {
+  const { t } = useLang();
   return (
     <section id="proyectos" className="relative py-28">
       <div className="mx-auto max-w-7xl px-6">
         <Reveal>
           <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
             <SectionHeader
-              eyebrow="Proyectos"
-              title={<>Trabajo seleccionado.<br/>Resultados <span className="text-gradient-electric">reales</span>.</>}
+              eyebrow={t("proj.eyebrow")}
+              title={<>{t("proj.title.1")}<br/>{t("proj.title.2")} <span className="text-gradient-electric">{t("proj.title.3")}</span>.</>}
             />
             <a href={WHATSAPP_URL} target="_blank" rel="noreferrer"
               className="inline-flex items-center gap-2 text-sm text-white/70 hover:text-white transition self-start md:self-auto">
-              Quiero algo así <ArrowRight className="h-4 w-4" />
+              {t("proj.cta")} <ArrowRight className="h-4 w-4" />
             </a>
           </div>
         </Reveal>
@@ -435,7 +495,7 @@ function Portfolio() {
                 </div>
                 <div className="flex items-center justify-between p-6">
                   <div>
-                    <div className="text-xs uppercase tracking-widest text-[#f5d76e]/80">{p.cat}</div>
+                    <div className="text-xs uppercase tracking-widest text-[#f5d76e]/80">{t(p.catKey)}</div>
                     <h3 className="font-display text-xl md:text-2xl font-medium mt-1">{p.name}</h3>
                   </div>
                   <span className="inline-flex h-11 w-11 items-center justify-center rounded-full glass-strong group-hover:bg-white group-hover:text-black transition">
@@ -452,6 +512,7 @@ function Portfolio() {
 }
 
 function AutomationsAI() {
+  const { t } = useLang();
   return (
     <section id="ia" className="relative py-28 overflow-hidden">
       <div className="absolute inset-0 -z-10 radial-glow opacity-60" />
@@ -460,33 +521,28 @@ function AutomationsAI() {
           <Reveal>
             <div>
               <div className="inline-flex items-center gap-2 rounded-full glass px-3 py-1 text-xs text-white/70">
-                <span className="h-1 w-1 rounded-full bg-[#3b82f6]" /> Automatizaciones IA
+                <span className="h-1 w-1 rounded-full bg-[#3b82f6]" /> {t("ia.eyebrow")}
               </div>
               <h2 className="font-display mt-5 text-4xl md:text-5xl lg:text-6xl font-semibold tracking-tight leading-[1.05]">
-                Automatizamos procesos para que tu negocio{" "}
-                <span className="text-gradient-gold">trabaje incluso cuando dormís</span>.
+                {t("ia.title.1")}{" "}
+                <span className="text-gradient-gold">{t("ia.title.2")}</span>.
               </h2>
               <p className="mt-6 text-white/60 text-lg leading-relaxed">
-                Conectamos tus herramientas, datos y canales en flujos inteligentes. Lo que antes tomaba horas, ahora ocurre en segundos.
+                {t("ia.subtitle")}
               </p>
               <ul className="mt-8 space-y-3">
-                {[
-                  "Captura y calificación automática de leads",
-                  "Respuestas con IA en WhatsApp, Instagram y email",
-                  "Reportes que se generan y envían solos",
-                  "Integraciones con CRM, pagos, calendarios y más",
-                ].map((t) => (
-                  <li key={t} className="flex items-start gap-3 text-white/75">
+                {[t("ia.l1"), t("ia.l2"), t("ia.l3"), t("ia.l4")].map((line) => (
+                  <li key={line} className="flex items-start gap-3 text-white/75">
                     <span className="mt-0.5 grid place-items-center h-5 w-5 rounded-full bg-[#3b82f6]/20 border border-[#3b82f6]/40">
                       <Check className="h-3 w-3 text-[#7dd3fc]" />
                     </span>
-                    {t}
+                    {line}
                   </li>
                 ))}
               </ul>
               <a href={WHATSAPP_URL} target="_blank" rel="noreferrer"
                 className="mt-10 inline-flex items-center gap-2 rounded-full bg-white text-black px-6 py-3 text-sm font-medium hover:scale-[1.02] transition glow-gold">
-                Automatizar mi negocio <ArrowRight className="h-4 w-4" />
+                {t("ia.cta")} <ArrowRight className="h-4 w-4" />
               </a>
             </div>
           </Reveal>
@@ -530,52 +586,127 @@ function FlowDiagram() {
   );
 }
 
-const TESTIMONIALS = [
+type Testimonial = {
+  name: string;
+  role: string;
+  initials: string;
+  rating: number;
+  text: { es: string; pt: string; en: string };
+  lang: Lang; // idioma "original" en que se muestra siempre
+};
+
+const TESTIMONIALS: Testimonial[] = [
   {
     name: "Lucía Fernández",
     role: "CEO · Atlas Studio",
-    text: "GENESIS rediseñó nuestra web y automatizó la captación de leads. En 60 días triplicamos consultas calificadas.",
     initials: "LF",
+    rating: 5,
+    lang: "es",
+    text: {
+      es: "Cumplieron con todo lo prometido y un poco más. La web quedó muy bien y las consultas crecieron bastante. Hubo un par de cambios pedidos sobre la marcha y los resolvieron rápido.",
+      pt: "Cumpriram tudo o prometido e um pouco mais. O site ficou ótimo e os contatos cresceram bastante. Tivemos alguns ajustes no caminho e foram resolvidos rápido.",
+      en: "They delivered everything promised, and a bit more. The site turned out really nice and inquiries grew a lot. A couple of last-minute changes were handled quickly.",
+    },
   },
   {
-    name: "Mateo Álvarez",
-    role: "Founder · Nova Store",
-    text: "El bot de WhatsApp atiende solo el 80% de las consultas. Recuperamos horas y vendemos más. Inversión recuperada en semanas.",
-    initials: "MA",
+    name: "Rafael Souza",
+    role: "Founder · Loja Boreal",
+    initials: "RS",
+    rating: 4,
+    lang: "pt",
+    text: {
+      pt: "O bot do WhatsApp ajudou demais no atendimento, hoje resolve a maior parte das dúvidas sozinho. Ainda tem coisas pra ajustar, mas o suporte é atencioso e entrega no prazo.",
+      es: "El bot de WhatsApp ayudó muchísimo con la atención, hoy resuelve la mayoría de las dudas solo. Todavía quedan cosas para ajustar, pero el soporte es atento y cumple los plazos.",
+      en: "The WhatsApp bot really helped our support, it handles most questions on its own now. There are still things to tweak, but the team is attentive and meets deadlines.",
+    },
   },
   {
     name: "Camila Rossi",
     role: "Marketing · Apex Group",
-    text: "Trabajan con un nivel premium que rara vez se ve. Diseño, ejecución y estrategia, todo de primera.",
     initials: "CR",
+    rating: 3,
+    lang: "es",
+    text: {
+      es: "El diseño final nos gustó y se nota el trabajo. La comunicación al principio fue un poco lenta y nos costó alinear expectativas, pero el resultado terminó siendo bueno.",
+      pt: "Gostamos do design final e dá pra notar o trabalho. A comunicação no começo foi um pouco lenta e custou alinhar expectativas, mas o resultado acabou sendo bom.",
+      en: "We liked the final design and the craft shows. Communication was a bit slow at first and aligning expectations took effort, but the result ended up being good.",
+    },
+  },
+  {
+    name: "João Pereira",
+    role: "Diretor · NorteTech",
+    initials: "JP",
+    rating: 5,
+    lang: "pt",
+    text: {
+      pt: "Automatizaram processos internos que tomavam horas todo dia. A equipe sobrou tempo pra focar em vender. Recomendo, muito profissionais.",
+      es: "Automatizaron procesos internos que nos tomaban horas todos los días. El equipo ganó tiempo para enfocarse en vender. Los recomiendo, muy profesionales.",
+      en: "They automated internal processes that used to take hours every day. The team freed up time to focus on selling. Highly recommend, very professional.",
+    },
+  },
+  {
+    name: "Mateo Álvarez",
+    role: "Founder · Nova Store",
+    initials: "MA",
+    rating: 4,
+    lang: "es",
+    text: {
+      es: "Buena experiencia en general. El funnel mejoró las conversiones y vimos resultados en pocas semanas. Algunas integraciones llevaron más tiempo del esperado, pero funcionan bien.",
+      pt: "Boa experiência no geral. O funil melhorou as conversões e vimos resultados em poucas semanas. Algumas integrações demoraram mais do que o esperado, mas funcionam bem.",
+      en: "Solid experience overall. The funnel improved conversions and we saw results within weeks. Some integrations took longer than expected, but they work well.",
+    },
+  },
+  {
+    name: "Beatriz Lima",
+    role: "COO · Studio Verão",
+    initials: "BL",
+    rating: 5,
+    lang: "pt",
+    text: {
+      pt: "Trabalho de alto nível. Entenderam a nossa marca rápido e entregaram algo do qual a gente se orgulha de mostrar. Vamos seguir trabalhando juntos.",
+      es: "Trabajo de alto nivel. Entendieron nuestra marca rápido y entregaron algo que nos enorgullece mostrar. Vamos a seguir trabajando juntos.",
+      en: "High-level work. They understood our brand quickly and delivered something we're proud to show. We'll keep working with them.",
+    },
   },
 ];
 
 function Testimonials() {
+  const { t, lang } = useLang();
   return (
     <section className="relative py-28">
       <div className="mx-auto max-w-7xl px-6">
         <Reveal>
           <SectionHeader
-            eyebrow="Testimonios"
-            title={<>Lo que dicen las marcas que <span className="text-gradient-gold">eligieron evolucionar</span>.</>}
+            eyebrow={t("tst.eyebrow")}
+            title={<>{t("tst.title.1")} <span className="text-gradient-gold">{t("tst.title.2")}</span>.</>}
           />
         </Reveal>
-        <div className="mt-14 grid gap-5 md:grid-cols-3">
-          {TESTIMONIALS.map((t, i) => (
-            <Reveal key={t.name} delay={i * 100}>
+        <div className="mt-14 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+          {TESTIMONIALS.map((tst, i) => (
+            <Reveal key={tst.name} delay={i * 100}>
               <figure className="glass rounded-2xl p-7 h-full flex flex-col">
-                <div className="flex gap-0.5 text-[#f5d76e]">
-                  {Array.from({ length: 5 }).map((_, k) => <Star key={k} className="h-4 w-4 fill-current" />)}
+                <div className="flex items-center gap-0.5">
+                  {Array.from({ length: 5 }).map((_, k) => (
+                    <Star
+                      key={k}
+                      className={`h-4 w-4 ${k < tst.rating ? "text-[#f5d76e] fill-current" : "text-white/15"}`}
+                    />
+                  ))}
+                  <span className="ml-2 text-xs text-white/40">{tst.rating}.0</span>
                 </div>
-                <blockquote className="mt-5 text-white/80 leading-relaxed">"{t.text}"</blockquote>
+                <blockquote className="mt-5 text-white/80 leading-relaxed">
+                  "{tst.text[lang]}"
+                </blockquote>
                 <figcaption className="mt-6 flex items-center gap-3">
                   <span className="grid place-items-center h-10 w-10 rounded-full bg-gradient-to-br from-[#3b82f6] to-[#1e3a8a] text-sm font-medium">
-                    {t.initials}
+                    {tst.initials}
                   </span>
-                  <span>
-                    <div className="text-sm font-medium text-white">{t.name}</div>
-                    <div className="text-xs text-white/50">{t.role}</div>
+                  <span className="flex-1">
+                    <div className="text-sm font-medium text-white">{tst.name}</div>
+                    <div className="text-xs text-white/50">{tst.role}</div>
+                  </span>
+                  <span className="text-[10px] uppercase tracking-widest text-white/30 border border-white/10 rounded-full px-2 py-0.5">
+                    {tst.lang}
                   </span>
                 </figcaption>
               </figure>
@@ -588,6 +719,7 @@ function Testimonials() {
 }
 
 function FinalCTA() {
+  const { t } = useLang();
   return (
     <section id="contacto" className="relative py-32 overflow-hidden">
       <div className="absolute inset-0 -z-10">
@@ -597,29 +729,28 @@ function FinalCTA() {
       <div className="mx-auto max-w-5xl px-6 text-center">
         <Reveal>
           <h2 className="font-display text-5xl md:text-7xl lg:text-8xl font-semibold tracking-tight leading-[1.02]">
-            Tu negocio necesita{" "}
-            <span className="text-gradient-electric">evolucionar</span>.
+            {t("cta.title.1")}{" "}
+            <span className="text-gradient-electric">{t("cta.title.2")}</span>.
           </h2>
         </Reveal>
         <Reveal delay={150}>
           <p className="mt-7 text-white/60 text-lg md:text-xl max-w-2xl mx-auto">
-            La diferencia entre crecer o quedar atrás está en la tecnología.
-            Empezá hoy y dejá que la próxima década te encuentre listo.
+            {t("cta.sub")}
           </p>
         </Reveal>
         <Reveal delay={300}>
           <div className="mt-12 flex flex-col sm:flex-row items-center justify-center gap-3">
             <a href={WHATSAPP_URL} target="_blank" rel="noreferrer"
               className="inline-flex items-center justify-center gap-2 rounded-full bg-white text-black px-7 py-4 text-base font-medium hover:scale-[1.02] transition glow-electric">
-              <Code2 className="h-4 w-4" /> Quiero mi página web
+              <Code2 className="h-4 w-4" /> {t("cta.b1")}
             </a>
             <a href={WHATSAPP_URL} target="_blank" rel="noreferrer"
               className="inline-flex items-center justify-center gap-2 rounded-full glass-strong text-white px-7 py-4 text-base font-medium hover:bg-white/10 transition">
-              <Cpu className="h-4 w-4" /> Automatizar mi negocio
+              <Cpu className="h-4 w-4" /> {t("cta.b2")}
             </a>
             <a href={WHATSAPP_URL} target="_blank" rel="noreferrer"
               className="inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-[#f5d76e] to-[#d4a418] text-black px-7 py-4 text-base font-medium hover:scale-[1.02] transition glow-gold">
-              <MessageCircle className="h-4 w-4" /> Hablar por WhatsApp
+              <MessageCircle className="h-4 w-4" /> {t("cta.b3")}
             </a>
           </div>
         </Reveal>
@@ -629,6 +760,7 @@ function FinalCTA() {
 }
 
 function Footer() {
+  const { t } = useLang();
   return (
     <footer className="relative border-t border-white/10 pt-16 pb-10">
       <div className="mx-auto max-w-7xl px-6">
@@ -636,7 +768,7 @@ function Footer() {
           <div className="md:col-span-2">
             <Logo />
             <p className="mt-5 max-w-md text-sm text-white/55 leading-relaxed">
-              GENESIS — Sistemas digitales inteligentes. Web premium, IA, automatización y soluciones para marcas modernas.
+              {t("ft.desc")}
             </p>
             <div className="mt-6 flex items-center gap-3">
               {[
@@ -654,27 +786,27 @@ function Footer() {
             </div>
           </div>
           <div>
-            <h4 className="text-xs uppercase tracking-widest text-white/40">Servicios</h4>
+            <h4 className="text-xs uppercase tracking-widest text-white/40">{t("ft.services")}</h4>
             <ul className="mt-4 space-y-2 text-sm text-white/70">
-              <li><a href="#servicios" className="hover:text-white">Desarrollo web</a></li>
-              <li><a href="#servicios" className="hover:text-white">Automatizaciones IA</a></li>
-              <li><a href="#servicios" className="hover:text-white">Bots de WhatsApp</a></li>
-              <li><a href="#servicios" className="hover:text-white">Funnels de venta</a></li>
+              <li><a href="#servicios" className="hover:text-white">{t("svc.web")}</a></li>
+              <li><a href="#servicios" className="hover:text-white">{t("svc.ai")}</a></li>
+              <li><a href="#servicios" className="hover:text-white">{t("svc.bot")}</a></li>
+              <li><a href="#servicios" className="hover:text-white">{t("svc.funnel")}</a></li>
             </ul>
           </div>
           <div>
-            <h4 className="text-xs uppercase tracking-widest text-white/40">Empresa</h4>
+            <h4 className="text-xs uppercase tracking-widest text-white/40">{t("ft.company")}</h4>
             <ul className="mt-4 space-y-2 text-sm text-white/70">
-              <li><a href="#proyectos" className="hover:text-white">Proyectos</a></li>
-              <li><a href="#por-que" className="hover:text-white">Por qué GENESIS</a></li>
-              <li><a href="#contacto" className="hover:text-white">Contacto</a></li>
-              <li><a href={WHATSAPP_URL} target="_blank" rel="noreferrer" className="hover:text-white">WhatsApp</a></li>
+              <li><a href="#proyectos" className="hover:text-white">{t("nav.projects")}</a></li>
+              <li><a href="#por-que" className="hover:text-white">{t("ft.why")}</a></li>
+              <li><a href="#contacto" className="hover:text-white">{t("nav.contact")}</a></li>
+              <li><a href={WHATSAPP_URL} target="_blank" rel="noreferrer" className="hover:text-white">{t("nav.whatsapp")}</a></li>
             </ul>
           </div>
         </div>
         <div className="mt-12 flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-white/10 pt-8 text-xs text-white/40">
-          <span>© {new Date().getFullYear()} GENESIS. Todos los derechos reservados.</span>
-          <span>Diseñado para marcas que no se conforman.</span>
+          <span>© {new Date().getFullYear()} GENESIS. {t("ft.rights")}</span>
+          <span>{t("ft.tag")}</span>
         </div>
       </div>
     </footer>
@@ -682,32 +814,35 @@ function Footer() {
 }
 
 function FloatingWhatsApp() {
+  const { t } = useLang();
   return (
     <a href={WHATSAPP_URL} target="_blank" rel="noreferrer" aria-label="WhatsApp"
       className="fixed bottom-6 right-6 z-50 inline-flex items-center gap-2 rounded-full bg-[#25D366] text-black pl-3 pr-5 py-3 font-medium shadow-2xl shadow-[#25D366]/30 hover:scale-105 transition">
       <span className="grid place-items-center h-8 w-8 rounded-full bg-black/10">
         <MessageCircle className="h-4 w-4" />
       </span>
-      <span className="hidden sm:inline text-sm">Hablemos</span>
+      <span className="hidden sm:inline text-sm">{t("fab.chat")}</span>
     </a>
   );
 }
 
 function Landing() {
   return (
-    <div className="min-h-screen bg-background text-foreground antialiased">
-      <Nav />
-      <main>
-        <Hero />
-        <Services />
-        <WhyGenesis />
-        <Portfolio />
-        <AutomationsAI />
-        <Testimonials />
-        <FinalCTA />
-      </main>
-      <Footer />
-      <FloatingWhatsApp />
-    </div>
+    <LanguageProvider>
+      <div className="min-h-screen bg-background text-foreground antialiased">
+        <Nav />
+        <main>
+          <Hero />
+          <Services />
+          <WhyGenesis />
+          <Portfolio />
+          <AutomationsAI />
+          <Testimonials />
+          <FinalCTA />
+        </main>
+        <Footer />
+        <FloatingWhatsApp />
+      </div>
+    </LanguageProvider>
   );
 }
