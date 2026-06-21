@@ -7,6 +7,14 @@ import businessImg from "@/assets/nova-business.jpg";
 import eveningImg from "@/assets/nova-evening.jpg";
 import ctaImg from "@/assets/nova-cta.jpg";
 import limitedImg from "@/assets/nova-limited.jpg";
+import catCamisas from "@/assets/cat-camisas.jpg";
+import catPolos from "@/assets/cat-polos.jpg";
+import catPantalones from "@/assets/cat-pantalones.jpg";
+import catBlazers from "@/assets/cat-blazers.jpg";
+import catCalzado from "@/assets/cat-calzado.jpg";
+import catAccesorios from "@/assets/cat-accesorios.jpg";
+
+const WHATSAPP_URL = "https://wa.me/5491100000000?text=Hola%20NOVA%2C%20me%20interesa%20conocer%20la%20colecci%C3%B3n";
 
 export const Route = createFileRoute("/")({
   component: NovaLanding,
@@ -267,7 +275,14 @@ function Collections() {
 }
 
 // --- Categories ---
-const CATEGORIES = ["Camisas", "Polos", "Pantalones", "Blazers", "Calzado", "Accesorios"];
+const CATEGORIES = [
+  { name: "Camisas", img: catCamisas },
+  { name: "Polos", img: catPolos },
+  { name: "Pantalones", img: catPantalones },
+  { name: "Blazers", img: catBlazers },
+  { name: "Calzado", img: catCalzado },
+  { name: "Accesorios", img: catAccesorios },
+];
 
 function Categories() {
   return (
@@ -281,15 +296,22 @@ function Categories() {
 
       <div className="grid grid-cols-2 gap-px bg-[color:var(--border)] md:grid-cols-3">
         {CATEGORIES.map((c, i) => (
-          <Reveal key={c} delay={i * 60}>
+          <Reveal key={c.name} delay={i * 60}>
             <a
               href="#"
-              className="group relative flex aspect-[4/3] flex-col justify-between bg-[color:var(--cream)] p-6 transition-colors duration-500 hover:bg-[color:var(--sand)]/40 md:p-8"
+              className="group relative flex aspect-[4/3] flex-col justify-between overflow-hidden bg-[color:var(--cream)] p-6 md:p-8"
             >
-              <span className="text-[11px] uppercase tracking-editorial text-[color:var(--bronze)]">0{i + 1}</span>
-              <div>
-                <h3 className="font-serif text-3xl text-[color:var(--ink)] md:text-4xl">{c}</h3>
-                <span className="mt-3 inline-flex items-center gap-2 text-[11px] uppercase tracking-editorial text-[color:var(--cocoa)] transition-all duration-500 group-hover:gap-4">
+              <img
+                src={c.img}
+                alt={c.name}
+                loading="lazy"
+                className="absolute inset-0 h-full w-full object-cover transition-transform duration-[1200ms] ease-out group-hover:scale-105"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#1A1A1A]/75 via-[#1A1A1A]/15 to-transparent transition-opacity duration-500 group-hover:from-[#1A1A1A]/85" />
+              <span className="relative text-[11px] uppercase tracking-editorial text-[color:var(--cream)]/85">0{i + 1}</span>
+              <div className="relative">
+                <h3 className="font-serif text-3xl text-[color:var(--cream)] md:text-4xl">{c.name}</h3>
+                <span className="mt-3 inline-flex items-center gap-2 text-[11px] uppercase tracking-editorial text-[color:var(--sand)] transition-all duration-500 group-hover:gap-4">
                   Ver pieza
                   <span>→</span>
                 </span>
@@ -561,6 +583,7 @@ function NovaLanding() {
     <main className="bg-[color:var(--cream)] text-[color:var(--ink)]">
       <Nav />
       <Hero />
+      <HeroCarousel />
       <Marquee />
       <Benefits />
       <Collections />
@@ -570,7 +593,97 @@ function NovaLanding() {
       <Limited />
       <FAQ />
       <FinalCTA />
+      <ClosingCarousel />
       <Footer />
+      <FloatingWhatsApp />
     </main>
+  );
+}
+
+// --- Image carousel (marquee of clothing photos) ---
+function ImageMarquee({ images, reverse = false, speed = 50 }: { images: { src: string; alt: string }[]; reverse?: boolean; speed?: number }) {
+  const loop = [...images, ...images];
+  return (
+    <div className="overflow-hidden">
+      <div
+        className="flex gap-6 py-2"
+        style={{
+          animation: `${reverse ? "img-marquee-rev" : "img-marquee"} ${speed}s linear infinite`,
+          width: "max-content",
+        }}
+      >
+        {loop.map((img, i) => (
+          <div key={i} className="relative h-[260px] w-[200px] shrink-0 overflow-hidden md:h-[420px] md:w-[320px]">
+            <img src={img.src} alt={img.alt} loading="lazy" className="h-full w-full object-cover" />
+          </div>
+        ))}
+      </div>
+      <style>{`
+        @keyframes img-marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+        @keyframes img-marquee-rev { from { transform: translateX(-50%); } to { transform: translateX(0); } }
+      `}</style>
+    </div>
+  );
+}
+
+function HeroCarousel() {
+  const imgs = [
+    { src: linenImg, alt: "Colección Lino" },
+    { src: coastalImg, alt: "Colección Coastal" },
+    { src: businessImg, alt: "Colección Business" },
+    { src: eveningImg, alt: "Colección Evening" },
+    { src: catBlazers, alt: "Blazers" },
+    { src: catCamisas, alt: "Camisas" },
+    { src: catPantalones, alt: "Pantalones" },
+    { src: catCalzado, alt: "Calzado" },
+  ];
+  return (
+    <section className="bg-[color:var(--cream)] py-10 md:py-14">
+      <div className="mx-auto mb-6 max-w-[1400px] px-6 md:px-10">
+        <p className="text-[11px] uppercase tracking-luxury text-[color:var(--bronze)]">— Lo que vestimos</p>
+      </div>
+      <ImageMarquee images={imgs} speed={55} />
+    </section>
+  );
+}
+
+function ClosingCarousel() {
+  const imgs = [
+    { src: catAccesorios, alt: "Accesorios" },
+    { src: eveningImg, alt: "Evening" },
+    { src: catPolos, alt: "Polos" },
+    { src: coastalImg, alt: "Coastal" },
+    { src: catBlazers, alt: "Blazers" },
+    { src: linenImg, alt: "Lino" },
+    { src: catCalzado, alt: "Calzado" },
+    { src: businessImg, alt: "Business" },
+  ];
+  return (
+    <section className="bg-[color:var(--card)] py-16 md:py-24">
+      <div className="mx-auto mb-8 max-w-[1400px] px-6 md:px-10">
+        <p className="text-[11px] uppercase tracking-luxury text-[color:var(--bronze)]">— Universo NOVA</p>
+        <h2 className="mt-3 font-serif text-[28px] leading-[1.1] text-[color:var(--ink)] md:text-[44px]">
+          Una mirada al <span className="italic font-light">vestidor.</span>
+        </h2>
+      </div>
+      <ImageMarquee images={imgs} reverse speed={60} />
+    </section>
+  );
+}
+
+// --- Floating WhatsApp ---
+function FloatingWhatsApp() {
+  return (
+    <a
+      href={WHATSAPP_URL}
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label="Hablar por WhatsApp"
+      className="fixed bottom-6 right-6 z-[60] flex h-14 w-14 items-center justify-center rounded-full bg-[#25D366] text-white shadow-[0_10px_30px_rgba(37,211,102,0.45)] transition-transform duration-300 hover:scale-110 md:h-16 md:w-16"
+    >
+      <svg viewBox="0 0 32 32" className="h-7 w-7 md:h-8 md:w-8" fill="currentColor" aria-hidden="true">
+        <path d="M19.11 17.27c-.27-.14-1.59-.78-1.84-.87-.25-.09-.43-.14-.61.14-.18.27-.7.87-.86 1.05-.16.18-.32.2-.59.07-.27-.14-1.14-.42-2.18-1.34-.81-.72-1.35-1.61-1.5-1.88-.16-.27-.02-.42.12-.55.12-.12.27-.32.41-.48.14-.16.18-.27.27-.45.09-.18.05-.34-.02-.48-.07-.14-.61-1.47-.84-2.02-.22-.53-.45-.46-.61-.47l-.52-.01c-.18 0-.48.07-.73.34s-.96.94-.96 2.29.99 2.66 1.13 2.84c.14.18 1.95 2.98 4.73 4.18.66.29 1.18.46 1.58.59.66.21 1.26.18 1.74.11.53-.08 1.59-.65 1.82-1.27.23-.62.23-1.16.16-1.27-.07-.11-.25-.18-.52-.32zM16.02 5.33c-5.89 0-10.67 4.78-10.67 10.67 0 1.88.49 3.72 1.43 5.34L5 27l5.78-1.51a10.6 10.6 0 0 0 5.24 1.34h.01c5.88 0 10.67-4.78 10.67-10.67s-4.79-10.67-10.68-10.67zm0 19.55h-.01a8.86 8.86 0 0 1-4.51-1.24l-.32-.19-3.43.9.92-3.34-.21-.34a8.85 8.85 0 0 1-1.36-4.72c0-4.89 3.98-8.87 8.88-8.87 2.37 0 4.6.93 6.27 2.6a8.79 8.79 0 0 1 2.6 6.28c0 4.89-3.98 8.88-8.83 8.88z" />
+      </svg>
+    </a>
   );
 }
