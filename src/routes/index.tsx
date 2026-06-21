@@ -1,558 +1,117 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
-import {
-  Code2,
-  LayoutDashboard,
-  ShoppingBag,
-  Cpu,
-  MessageCircle,
-  Workflow,
-  Plug,
-  Palette,
-  TrendingUp,
-  Sparkles,
-  ArrowRight,
-  ArrowUpRight,
-  Check,
-  Star,
-  Zap,
-  Shield,
-  Rocket,
-  Brain,
-  Instagram,
-  Mail,
-  Linkedin,
-  Twitter,
-  Globe,
-} from "lucide-react";
-import heroImg from "../assets/hero.jpg";
-import automationImg from "../assets/automation.jpg";
-import project1 from "../assets/project1.jpg";
-import project2 from "../assets/project2.jpg";
-import project3 from "../assets/project3.jpg";
-import project4 from "../assets/project4.jpg";
-import { LanguageProvider, useLang, type Lang } from "@/lib/i18n";
-
-const WHATSAPP_URL = "https://wa.me/5491100000000?text=Hola%20GENESIS%2C%20quiero%20info";
+import heroImg from "@/assets/nova-hero.jpg";
+import linenImg from "@/assets/nova-linen.jpg";
+import coastalImg from "@/assets/nova-coastal.jpg";
+import businessImg from "@/assets/nova-business.jpg";
+import eveningImg from "@/assets/nova-evening.jpg";
+import ctaImg from "@/assets/nova-cta.jpg";
+import limitedImg from "@/assets/nova-limited.jpg";
 
 export const Route = createFileRoute("/")({
-  head: () => ({
-    meta: [
-      { title: "GENESIS — Sistemas digitales inteligentes para marcas modernas" },
-      {
-        name: "description",
-        content:
-          "Agencia digital especializada en desarrollo web premium, automatizaciones con IA, bots de WhatsApp, funnels de venta y soluciones para negocios.",
-      },
-    ],
-  }),
-  component: Landing,
+  component: NovaLanding,
 });
 
-function useCountUp(target: number, duration = 1800, start = false) {
-  const [value, setValue] = useState(0);
-  useEffect(() => {
-    if (!start) return;
-    let raf = 0;
-    const t0 = performance.now();
-    const tick = (now: number) => {
-      const p = Math.min(1, (now - t0) / duration);
-      const eased = 1 - Math.pow(1 - p, 3);
-      setValue(Math.round(target * eased));
-      if (p < 1) raf = requestAnimationFrame(tick);
-    };
-    raf = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(raf);
-  }, [target, duration, start]);
-  return value;
-}
-
-function Reveal({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) {
+// --- Reveal on scroll ---
+function Reveal({ children, className = "", delay = 0 }: { children: React.ReactNode; className?: string; delay?: number }) {
   const ref = useRef<HTMLDivElement>(null);
-  const [visible, setVisible] = useState(false);
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
-    const io = new IntersectionObserver(
-      ([e]) => e.isIntersecting && setVisible(true),
-      { threshold: 0.15 },
+    const obs = new IntersectionObserver(
+      ([e]) => {
+        if (e.isIntersecting) {
+          setTimeout(() => el.classList.add("in"), delay);
+          obs.disconnect();
+        }
+      },
+      { threshold: 0.12 }
     );
-    io.observe(el);
-    return () => io.disconnect();
-  }, []);
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, [delay]);
   return (
-    <div
-      ref={ref}
-      style={{ transitionDelay: `${delay}ms` }}
-      className={`transition-all duration-700 ease-out ${
-        visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
-      }`}
-    >
+    <div ref={ref} className={`reveal ${className}`}>
       {children}
     </div>
   );
 }
 
-function Logo({ className = "" }: { className?: string }) {
-  return (
-    <a href="#top" className={`flex items-center gap-2.5 ${className}`}>
-      <span className="relative inline-flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-[#3b82f6] to-[#1e3a8a]">
-        <span className="absolute inset-0 rounded-lg blur-md bg-[#3b82f6]/50" />
-        <Sparkles className="relative h-4 w-4 text-white" />
-      </span>
-      <span className="font-display text-lg font-semibold tracking-[0.18em]">GENESIS</span>
-    </a>
-  );
-}
-
+// --- Nav ---
 function Nav() {
   const [scrolled, setScrolled] = useState(false);
-  const { t } = useLang();
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 20);
+    const onScroll = () => setScrolled(window.scrollY > 40);
     window.addEventListener("scroll", onScroll);
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
   return (
     <header
-      className={`fixed top-0 inset-x-0 z-50 transition-all duration-500 ${
-        scrolled ? "py-3" : "py-5"
+      className={`fixed inset-x-0 top-0 z-50 transition-all duration-500 ${
+        scrolled ? "bg-[color:var(--cream)]/90 backdrop-blur-md border-b hairline" : "bg-transparent"
       }`}
     >
-      <div className="mx-auto max-w-7xl px-6">
-        <div
-          className={`flex items-center justify-between rounded-2xl px-5 py-3 transition-all ${
-            scrolled ? "glass-strong" : ""
-          }`}
-        >
-          <Logo />
-          <nav className="hidden md:flex items-center gap-8 text-sm text-white/70">
-            <a href="#servicios" className="hover:text-white transition">{t("nav.services")}</a>
-            <a href="#por-que" className="hover:text-white transition">{t("nav.why")}</a>
-            <a href="#proyectos" className="hover:text-white transition">{t("nav.projects")}</a>
-            <a href="#ia" className="hover:text-white transition">{t("nav.automations")}</a>
-            <a href="#contacto" className="hover:text-white transition">{t("nav.contact")}</a>
-          </nav>
-          <div className="flex items-center gap-2">
-            <LangSwitcher />
-            <a
-              href={WHATSAPP_URL}
-              target="_blank"
-              rel="noreferrer"
-              className="hidden sm:inline-flex items-center gap-2 rounded-full bg-white text-black text-sm font-medium px-4 py-2 hover:bg-white/90 transition"
-            >
-              {t("nav.whatsapp")} <ArrowUpRight className="h-3.5 w-3.5" />
-            </a>
-          </div>
-        </div>
+      <div className="mx-auto flex max-w-[1400px] items-center justify-between px-6 py-5 md:px-10">
+        <a href="#top" className="font-serif text-2xl tracking-[0.18em] text-[color:var(--ink)]">
+          NOVA
+        </a>
+        <nav className="hidden items-center gap-10 text-[11px] font-medium uppercase tracking-editorial text-[color:var(--ink)]/80 md:flex">
+          <a href="#colecciones" className="nova-link">Colecciones</a>
+          <a href="#categorias" className="nova-link">Categorías</a>
+          <a href="#nosotros" className="nova-link">Nosotros</a>
+          <a href="#faq" className="nova-link">FAQ</a>
+        </nav>
+        <a href="#colecciones" className="hidden text-[11px] font-semibold uppercase tracking-editorial text-[color:var(--ink)] md:inline-flex">
+          Comprar
+          <span className="ml-2">→</span>
+        </a>
       </div>
     </header>
   );
 }
 
-function LangSwitcher() {
-  const { lang, setLang } = useLang();
-  const [open, setOpen] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    const onClick = (e: MouseEvent) => {
-      if (!ref.current?.contains(e.target as Node)) setOpen(false);
-    };
-    document.addEventListener("click", onClick);
-    return () => document.removeEventListener("click", onClick);
-  }, []);
-  const opts: { code: Lang; label: string; flag: string }[] = [
-    { code: "es", label: "Español", flag: "🇪🇸" },
-    { code: "pt", label: "Português", flag: "🇧🇷" },
-    { code: "en", label: "English", flag: "🇺🇸" },
-  ];
-  const current = opts.find((o) => o.code === lang)!;
-  return (
-    <div ref={ref} className="relative">
-      <button
-        onClick={() => setOpen((v) => !v)}
-        className="inline-flex items-center gap-1.5 rounded-full glass-strong px-3 py-2 text-xs font-medium text-white/80 hover:text-white hover:bg-white/10 transition"
-        aria-label="Change language"
-      >
-        <Globe className="h-3.5 w-3.5" />
-        <span className="hidden sm:inline">{current.flag}</span>
-        <span className="uppercase tracking-wider">{current.code}</span>
-      </button>
-      {open && (
-        <div className="absolute right-0 mt-2 min-w-[160px] rounded-xl glass-strong border border-white/10 overflow-hidden shadow-2xl">
-          {opts.map((o) => (
-            <button
-              key={o.code}
-              onClick={() => {
-                setLang(o.code);
-                setOpen(false);
-              }}
-              className={`w-full flex items-center gap-2 px-3 py-2 text-left text-sm transition ${
-                o.code === lang ? "bg-white/10 text-white" : "text-white/70 hover:bg-white/5 hover:text-white"
-              }`}
-            >
-              <span>{o.flag}</span>
-              <span>{o.label}</span>
-            </button>
-          ))}
-        </div>
-      )}
-    </div>
-  );
-}
-
+// --- Hero ---
 function Hero() {
-  const { t } = useLang();
   return (
-    <section id="top" className="relative pt-36 pb-24 md:pt-44 md:pb-32 overflow-hidden">
-      <div className="absolute inset-0 -z-10 radial-glow" />
-      <div className="absolute inset-0 -z-10 grid-bg" />
-      <div className="mx-auto max-w-7xl px-6">
-        <Reveal>
-          <div className="flex justify-center">
-            <span className="inline-flex items-center gap-2 rounded-full glass px-4 py-1.5 text-xs text-white/80">
-              <span className="h-1.5 w-1.5 rounded-full bg-[#3b82f6] animate-pulse-glow" />
-              {t("hero.badge")}
-            </span>
-          </div>
-        </Reveal>
-        <Reveal delay={100}>
-          <h1 className="font-display mt-8 text-center text-5xl md:text-7xl lg:text-[88px] leading-[1.02] font-semibold tracking-tight">
-            {t("hero.title.1")}
-            <br className="hidden md:block" />{" "}
-            {t("hero.title.2")}{" "}
-            <span className="text-gradient-electric">{t("hero.title.3")}</span>{" "}
-            <span className="text-gradient-gold">{t("hero.title.4")}</span>.
-          </h1>
-        </Reveal>
-        <Reveal delay={200}>
-          <p className="mx-auto mt-7 max-w-2xl text-center text-base md:text-lg text-white/60 leading-relaxed">
-            {t("hero.subtitle")}
-          </p>
-        </Reveal>
-        <Reveal delay={300}>
-          <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-3">
-            <a
-              href={WHATSAPP_URL}
-              target="_blank"
-              rel="noreferrer"
-              className="group relative inline-flex items-center justify-center gap-2 rounded-full bg-white text-black px-7 py-3.5 text-sm font-medium transition hover:scale-[1.02] glow-electric"
-            >
-              <MessageCircle className="h-4 w-4" />
-              {t("hero.cta.whatsapp")}
-              <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-            </a>
-            <a
-              href="#proyectos"
-              className="inline-flex items-center justify-center gap-2 rounded-full glass-strong px-7 py-3.5 text-sm font-medium text-white hover:bg-white/10 transition"
-            >
-              {t("hero.cta.projects")}
-              <ArrowUpRight className="h-4 w-4" />
-            </a>
-          </div>
-        </Reveal>
-
-        <Reveal delay={400}>
-          <div className="relative mt-20">
-            <div className="absolute -inset-x-10 -inset-y-6 -z-10 rounded-[40px] bg-gradient-to-b from-[#3b82f6]/10 to-transparent blur-2xl" />
-            <div className="relative mx-auto max-w-5xl rounded-3xl overflow-hidden glass-strong p-2">
-              <img
-                src={heroImg}
-                alt="Dashboards e interfaces flotantes con IA"
-                width={1600}
-                height={1024}
-                className="w-full h-auto rounded-2xl"
-              />
-            </div>
-            <FloatingCard
-              className="absolute -left-2 md:left-4 top-10 animate-float-slow"
-              icon={<Brain className="h-4 w-4 text-[#7dd3fc]" />}
-              title={t("hero.card.ai")}
-              value={t("hero.card.ai.value")}
-            />
-            <FloatingCard
-              className="absolute -right-2 md:right-4 bottom-12 animate-float-slow"
-              style={{ animationDelay: "1.5s" }}
-              icon={<TrendingUp className="h-4 w-4 text-[#f5d76e]" />}
-              title={t("hero.card.conv")}
-              value="+342%"
-            />
-          </div>
-        </Reveal>
-
-        <Reveal delay={500}>
-          <div className="mt-16 flex flex-wrap items-center justify-center gap-x-10 gap-y-4 text-xs uppercase tracking-[0.2em] text-white/30">
-            <span>{t("hero.tag.1")}</span>
-            <span className="h-1 w-1 rounded-full bg-white/20" />
-            <span>{t("hero.tag.2")}</span>
-            <span className="h-1 w-1 rounded-full bg-white/20" />
-            <span>{t("hero.tag.3")}</span>
-          </div>
-        </Reveal>
-      </div>
-    </section>
-  );
-}
-
-function FloatingCard({
-  className = "",
-  style,
-  icon,
-  title,
-  value,
-}: {
-  className?: string;
-  style?: React.CSSProperties;
-  icon: React.ReactNode;
-  title: string;
-  value: string;
-}) {
-  return (
-    <div
-      style={style}
-      className={`hidden md:flex glass-strong rounded-2xl p-4 min-w-[180px] items-center gap-3 ${className}`}
-    >
-      <span className="grid place-items-center h-9 w-9 rounded-xl bg-white/5">{icon}</span>
-      <div>
-        <div className="text-[10px] uppercase tracking-widest text-white/40">{title}</div>
-        <div className="text-sm font-medium text-white">{value}</div>
-      </div>
-    </div>
-  );
-}
-
-const SERVICES = [
-  { icon: Code2, key: "web" },
-  { icon: LayoutDashboard, key: "landing" },
-  { icon: ShoppingBag, key: "store" },
-  { icon: Cpu, key: "ai" },
-  { icon: MessageCircle, key: "bot" },
-  { icon: Workflow, key: "biz" },
-  { icon: Plug, key: "int" },
-  { icon: Palette, key: "ux" },
-  { icon: TrendingUp, key: "funnel" },
-  { icon: Zap, key: "opt" },
-];
-
-function Services() {
-  const { t } = useLang();
-  return (
-    <section id="servicios" className="relative py-28">
-      <div className="mx-auto max-w-7xl px-6">
-        <Reveal>
-          <SectionHeader
-            eyebrow={t("services.eyebrow")}
-            title={<>{t("services.title.1")} <span className="text-gradient-electric">{t("services.title.2")}</span> {t("services.title.3")}</>}
-            subtitle={t("services.subtitle")}
-          />
-        </Reveal>
-
-        <div className="mt-16 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {SERVICES.map((s, i) => (
-            <Reveal key={s.key} delay={i * 60}>
-              <div className="group relative glass rounded-2xl p-7 h-full transition hover:-translate-y-1 hover:bg-white/[0.06]">
-                <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition pointer-events-none"
-                  style={{ background: "radial-gradient(400px circle at 50% 0%, rgba(59,130,246,0.12), transparent 60%)" }} />
-                <div className="relative">
-                  <div className="inline-flex items-center justify-center h-12 w-12 rounded-xl bg-gradient-to-br from-white/10 to-white/[0.02] border border-white/10 mb-5">
-                    <s.icon className="h-5 w-5 text-[#7dd3fc] group-hover:text-[#f5d76e] transition" />
-                  </div>
-                  <h3 className="font-display text-xl font-medium text-white">{t(`svc.${s.key}`)}</h3>
-                  <p className="mt-2 text-sm text-white/55 leading-relaxed">{t(`svc.${s.key}.d`)}</p>
-                  <a href={WHATSAPP_URL} target="_blank" rel="noreferrer"
-                    className="mt-5 inline-flex items-center gap-1.5 text-xs text-white/50 group-hover:text-white transition">
-                    {t("services.quote")} <ArrowRight className="h-3 w-3" />
-                  </a>
-                </div>
-              </div>
-            </Reveal>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function SectionHeader({ eyebrow, title, subtitle }: { eyebrow: string; title: React.ReactNode; subtitle?: string }) {
-  return (
-    <div className="max-w-3xl">
-      <div className="inline-flex items-center gap-2 rounded-full glass px-3 py-1 text-xs text-white/70">
-        <span className="h-1 w-1 rounded-full bg-[#f5d76e]" /> {eyebrow}
-      </div>
-      <h2 className="font-display mt-5 text-4xl md:text-5xl lg:text-6xl font-semibold tracking-tight leading-[1.05]">
-        {title}
-      </h2>
-      {subtitle && <p className="mt-5 text-white/55 text-base md:text-lg max-w-2xl">{subtitle}</p>}
-    </div>
-  );
-}
-
-function Stat({ value, suffix, label, start }: { value: number; suffix: string; label: string; start: boolean }) {
-  const v = useCountUp(value, 1800, start);
-  return (
-    <div className="text-center">
-      <div className="font-display text-5xl md:text-6xl font-semibold tracking-tight">
-        <span className="text-gradient-electric">{v}</span>
-        <span className="text-white">{suffix}</span>
-      </div>
-      <div className="mt-2 text-sm text-white/50">{label}</div>
-    </div>
-  );
-}
-
-function WhyGenesis() {
-  const ref = useRef<HTMLDivElement>(null);
-  const [start, setStart] = useState(false);
-  const { t } = useLang();
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const io = new IntersectionObserver(([e]) => e.isIntersecting && setStart(true), { threshold: 0.3 });
-    io.observe(el);
-    return () => io.disconnect();
-  }, []);
-
-  const pillars = [
-    { icon: Rocket, k: "p1" },
-    { icon: Brain, k: "p2" },
-    { icon: Shield, k: "p3" },
-    { icon: TrendingUp, k: "p4" },
-  ];
-
-  return (
-    <section id="por-que" className="relative py-28">
-      <div className="absolute inset-0 -z-10 opacity-60">
-        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/15 to-transparent" />
-      </div>
-      <div className="mx-auto max-w-7xl px-6">
-        <Reveal>
-          <SectionHeader
-            eyebrow={t("why.eyebrow")}
-            title={<>{t("why.title.1")}<br/>{t("why.title.2")} <span className="text-gradient-gold">{t("why.title.3")}</span>.</>}
-            subtitle={t("why.subtitle")}
-          />
-        </Reveal>
-
-        <div className="mt-16 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
-          {pillars.map((p, i) => (
-            <Reveal key={p.k} delay={i * 80}>
-              <div className="glass rounded-2xl p-6 h-full hover:bg-white/[0.05] transition">
-                <p.icon className="h-6 w-6 text-[#f5d76e]" />
-                <h3 className="font-display text-lg mt-4 font-medium">{t(`why.${p.k}.t`)}</h3>
-                <p className="mt-2 text-sm text-white/55 leading-relaxed">{t(`why.${p.k}.d`)}</p>
-              </div>
-            </Reveal>
-          ))}
-        </div>
-
-        <div ref={ref} className="mt-20 rounded-3xl glass-strong p-10 md:p-14">
-          <div className="grid gap-10 md:grid-cols-4">
-            <Stat value={50} suffix="+" label={t("why.s1")} start={start} />
-            <Stat value={100} suffix="+" label={t("why.s2")} start={start} />
-            <Stat value={1000} suffix="+" label={t("why.s3")} start={start} />
-            <Stat value={98} suffix="%" label={t("why.s4")} start={start} />
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-const PROJECTS = [
-  { img: project1, name: "Nova Store", catKey: "proj.p1.cat" },
-  { img: project2, name: "Atlas Analytics", catKey: "proj.p2.cat" },
-  { img: project3, name: "WhatsBot 24/7", catKey: "proj.p3.cat" },
-  { img: project4, name: "Funnel Apex", catKey: "proj.p4.cat" },
-];
-
-function Portfolio() {
-  const { t } = useLang();
-  return (
-    <section id="proyectos" className="relative py-28">
-      <div className="mx-auto max-w-7xl px-6">
-        <Reveal>
-          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
-            <SectionHeader
-              eyebrow={t("proj.eyebrow")}
-              title={<>{t("proj.title.1")}<br/>{t("proj.title.2")} <span className="text-gradient-electric">{t("proj.title.3")}</span>.</>}
-            />
-            <a href={WHATSAPP_URL} target="_blank" rel="noreferrer"
-              className="inline-flex items-center gap-2 text-sm text-white/70 hover:text-white transition self-start md:self-auto">
-              {t("proj.cta")} <ArrowRight className="h-4 w-4" />
-            </a>
-          </div>
-        </Reveal>
-
-        <div className="mt-14 grid gap-5 md:grid-cols-2">
-          {PROJECTS.map((p, i) => (
-            <Reveal key={p.name} delay={i * 80}>
-              <a href={WHATSAPP_URL} target="_blank" rel="noreferrer"
-                className="group block rounded-3xl glass overflow-hidden">
-                <div className="relative aspect-[16/10] overflow-hidden">
-                  <img src={p.img} alt={p.name} width={1024} height={768} loading="lazy"
-                    className="w-full h-full object-cover transition duration-700 group-hover:scale-105" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
-                </div>
-                <div className="flex items-center justify-between p-6">
-                  <div>
-                    <div className="text-xs uppercase tracking-widest text-[#f5d76e]/80">{t(p.catKey)}</div>
-                    <h3 className="font-display text-xl md:text-2xl font-medium mt-1">{p.name}</h3>
-                  </div>
-                  <span className="inline-flex h-11 w-11 items-center justify-center rounded-full glass-strong group-hover:bg-white group-hover:text-black transition">
-                    <ArrowUpRight className="h-4 w-4" />
-                  </span>
-                </div>
-              </a>
-            </Reveal>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function AutomationsAI() {
-  const { t } = useLang();
-  return (
-    <section id="ia" className="relative py-28 overflow-hidden">
-      <div className="absolute inset-0 -z-10 radial-glow opacity-60" />
-      <div className="mx-auto max-w-7xl px-6">
-        <div className="grid gap-14 lg:grid-cols-2 items-center">
+    <section id="top" className="relative h-[100svh] min-h-[680px] w-full overflow-hidden">
+      <img
+        src={heroImg}
+        alt="Hombre elegante caminando frente al mar Mediterráneo con camisa de lino"
+        className="absolute inset-0 h-full w-full object-cover"
+        width={1920}
+        height={1080}
+      />
+      <div className="absolute inset-0 bg-gradient-to-b from-[#1A1A1A]/30 via-[#1A1A1A]/10 to-[#1A1A1A]/55" />
+      <div className="relative z-10 flex h-full flex-col">
+        <div className="flex-1" />
+        <div className="mx-auto w-full max-w-[1400px] px-6 pb-20 md:px-10 md:pb-28">
           <Reveal>
-            <div>
-              <div className="inline-flex items-center gap-2 rounded-full glass px-3 py-1 text-xs text-white/70">
-                <span className="h-1 w-1 rounded-full bg-[#3b82f6]" /> {t("ia.eyebrow")}
-              </div>
-              <h2 className="font-display mt-5 text-4xl md:text-5xl lg:text-6xl font-semibold tracking-tight leading-[1.05]">
-                {t("ia.title.1")}{" "}
-                <span className="text-gradient-gold">{t("ia.title.2")}</span>.
-              </h2>
-              <p className="mt-6 text-white/60 text-lg leading-relaxed">
-                {t("ia.subtitle")}
-              </p>
-              <ul className="mt-8 space-y-3">
-                {[t("ia.l1"), t("ia.l2"), t("ia.l3"), t("ia.l4")].map((line) => (
-                  <li key={line} className="flex items-start gap-3 text-white/75">
-                    <span className="mt-0.5 grid place-items-center h-5 w-5 rounded-full bg-[#3b82f6]/20 border border-[#3b82f6]/40">
-                      <Check className="h-3 w-3 text-[#7dd3fc]" />
-                    </span>
-                    {line}
-                  </li>
-                ))}
-              </ul>
-              <a href={WHATSAPP_URL} target="_blank" rel="noreferrer"
-                className="mt-10 inline-flex items-center gap-2 rounded-full bg-white text-black px-6 py-3 text-sm font-medium hover:scale-[1.02] transition glow-gold">
-                {t("ia.cta")} <ArrowRight className="h-4 w-4" />
-              </a>
+            <p className="mb-6 text-[11px] font-medium uppercase tracking-luxury text-[color:var(--cream)]/80">
+              NOVA — Maison de Elegancia Atemporal
+            </p>
+          </Reveal>
+          <Reveal delay={120}>
+            <h1 className="max-w-4xl font-serif text-[44px] leading-[1.05] text-[color:var(--cream)] md:text-[76px] lg:text-[88px]">
+              Elegancia que Habla<br />
+              <span className="italic font-light">Sin Decir una Palabra.</span>
+            </h1>
+          </Reveal>
+          <Reveal delay={240}>
+            <p className="mt-8 max-w-xl text-base leading-relaxed text-[color:var(--cream)]/85 md:text-lg">
+              Prendas diseñadas para hombres que entienden que el verdadero lujo está en los detalles.
+            </p>
+          </Reveal>
+          <Reveal delay={360}>
+            <div className="mt-10 flex flex-col gap-3 sm:flex-row">
+              <a href="#colecciones" className="btn-nova btn-nova-primary">Descubrir Colección</a>
+              <a href="#colecciones" className="btn-nova btn-nova-light">Ver Nuevos Lanzamientos</a>
             </div>
           </Reveal>
-
-          <Reveal delay={150}>
-            <div className="relative">
-              <div className="rounded-3xl overflow-hidden glass-strong p-2">
-                <img src={automationImg} alt="Flujos de automatización con IA" width={1400} height={900} loading="lazy" className="w-full h-auto rounded-2xl" />
-              </div>
-              <FlowDiagram />
+          <Reveal delay={500}>
+            <div className="mt-14 flex flex-wrap items-center gap-x-10 gap-y-3 text-[11px] uppercase tracking-editorial text-[color:var(--cream)]/75">
+              <span className="flex items-center gap-2"><Dot /> Calidad Premium</span>
+              <span className="flex items-center gap-2"><Dot /> Envíos a Todo Brasil</span>
+              <span className="flex items-center gap-2"><Dot /> Cambios Garantizados</span>
             </div>
           </Reveal>
         </div>
@@ -561,153 +120,225 @@ function AutomationsAI() {
   );
 }
 
-function FlowDiagram() {
+function Dot() {
+  return <span className="inline-block h-[6px] w-[6px] rounded-full bg-[color:var(--sand)]" />;
+}
+
+// --- Marquee strip ---
+function Marquee() {
+  const items = ["Loro Piana DNA", "Quiet Luxury", "Crafted in Italy", "Old Money", "Coastal Elegance", "Edición Limitada"];
   return (
-    <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 400 300" fill="none" aria-hidden>
-      <defs>
-        <linearGradient id="line" x1="0" x2="1">
-          <stop offset="0%" stopColor="#3b82f6" stopOpacity="0" />
-          <stop offset="50%" stopColor="#7dd3fc" stopOpacity="0.9" />
-          <stop offset="100%" stopColor="#f5d76e" stopOpacity="0" />
-        </linearGradient>
-      </defs>
-      {[40, 130, 230].map((y, i) => (
-        <path
-          key={i}
-          d={`M20,${y} C140,${y - 40} 260,${y + 40} 380,${y}`}
-          stroke="url(#line)"
-          strokeWidth="1.5"
-          strokeDasharray="6 8"
-          className="animate-flow"
-          style={{ animationDelay: `${i * 0.6}s` }}
-        />
-      ))}
+    <div className="border-y hairline bg-[color:var(--cream)] py-5 overflow-hidden">
+      <div className="flex animate-[marquee_38s_linear_infinite] gap-16 whitespace-nowrap text-[11px] uppercase tracking-luxury text-[color:var(--cocoa)]">
+        {[...items, ...items, ...items].map((it, i) => (
+          <span key={i} className="flex items-center gap-16">
+            {it}
+            <span className="text-[color:var(--bronze)]">✦</span>
+          </span>
+        ))}
+      </div>
+      <style>{`@keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }`}</style>
+    </div>
+  );
+}
+
+// --- Benefits ---
+const BENEFITS = [
+  { t: "Materiales Premium", d: "Seleccionamos tejidos de alta calidad para garantizar elegancia y durabilidad en cada prenda.", icon: IconLeaf },
+  { t: "Diseño Atemporal", d: "Piezas que trascienden tendencias. Pensadas para vestirte hoy y dentro de una década.", icon: IconCompass },
+  { t: "Confort Absoluto", d: "Lujo que se siente desde el primer uso. Patrones cuidados al milímetro.", icon: IconFeather },
+  { t: "Detalles Exclusivos", d: "Acabados cuidados en cada costura. La diferencia que solo se nota de cerca.", icon: IconDiamond },
+];
+
+function Benefits() {
+  return (
+    <section className="mx-auto max-w-[1400px] px-6 py-28 md:px-10 md:py-40">
+      <Reveal className="mb-20 max-w-2xl">
+        <p className="mb-5 text-[11px] uppercase tracking-luxury text-[color:var(--bronze)]">— Filosofía</p>
+        <h2 className="font-serif text-[34px] leading-[1.1] text-[color:var(--ink)] md:text-[54px]">
+          Creado para Hombres que<br />
+          <span className="italic font-light">Valoran la Diferencia.</span>
+        </h2>
+      </Reveal>
+      <div className="grid gap-px bg-[color:var(--border)] md:grid-cols-4">
+        {BENEFITS.map((b, i) => (
+          <Reveal key={b.t} delay={i * 100}>
+            <div className="group h-full bg-[color:var(--cream)] p-8 transition-colors duration-500 hover:bg-[color:var(--card)] md:p-10">
+              <b.icon />
+              <h3 className="mt-8 font-serif text-2xl text-[color:var(--ink)]">{b.t}</h3>
+              <p className="mt-4 text-sm leading-relaxed text-[color:var(--muted-foreground)]">{b.d}</p>
+            </div>
+          </Reveal>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function IconLeaf() {
+  return (
+    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" className="text-[color:var(--cocoa)]">
+      <path d="M3 21c0-9 6-15 18-18-1 12-7 18-18 18Z" />
+      <path d="M3 21 14 10" />
+    </svg>
+  );
+}
+function IconCompass() {
+  return (
+    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" className="text-[color:var(--cocoa)]">
+      <circle cx="12" cy="12" r="10" />
+      <path d="m16 8-5 3-3 5 5-3 3-5Z" />
+    </svg>
+  );
+}
+function IconFeather() {
+  return (
+    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" className="text-[color:var(--cocoa)]">
+      <path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5l6.74-6.76Z" />
+      <path d="M16 8 2 22M17.5 15H9" />
+    </svg>
+  );
+}
+function IconDiamond() {
+  return (
+    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" className="text-[color:var(--cocoa)]">
+      <path d="M6 3h12l4 6-10 12L2 9l4-6Z" />
+      <path d="M2 9h20M12 3v18" />
     </svg>
   );
 }
 
-type Testimonial = {
-  name: string;
-  role: string;
-  initials: string;
-  rating: number;
-  text: { es: string; pt: string; en: string };
-  lang: Lang; // idioma "original" en que se muestra siempre
-};
+// --- Collections ---
+const COLLECTIONS = [
+  { name: "Colección Lino", desc: "Tejidos respirables para el verano mediterráneo.", img: linenImg, tag: "Edición Verano" },
+  { name: "Colección Coastal", desc: "Inspirada en las costas italianas y el sol dorado.", img: coastalImg, tag: "Atemporal" },
+  { name: "Colección Business", desc: "Sastrería contemporánea para el hombre moderno.", img: businessImg, tag: "Sastrería" },
+  { name: "Colección Evening", desc: "Elegancia nocturna con acabados refinados.", img: eveningImg, tag: "Black Tie" },
+];
 
-const TESTIMONIALS: Testimonial[] = [
-  {
-    name: "Lucía Fernández",
-    role: "CEO · Atlas Studio",
-    initials: "LF",
-    rating: 5,
-    lang: "es",
-    text: {
-      es: "Cumplieron con todo lo prometido y un poco más. La web quedó muy bien y las consultas crecieron bastante. Hubo un par de cambios pedidos sobre la marcha y los resolvieron rápido.",
-      pt: "Cumpriram tudo o prometido e um pouco mais. O site ficou ótimo e os contatos cresceram bastante. Tivemos alguns ajustes no caminho e foram resolvidos rápido.",
-      en: "They delivered everything promised, and a bit more. The site turned out really nice and inquiries grew a lot. A couple of last-minute changes were handled quickly.",
-    },
-  },
-  {
-    name: "Rafael Souza",
-    role: "Founder · Loja Boreal",
-    initials: "RS",
-    rating: 4,
-    lang: "pt",
-    text: {
-      pt: "O bot do WhatsApp ajudou demais no atendimento, hoje resolve a maior parte das dúvidas sozinho. Ainda tem coisas pra ajustar, mas o suporte é atencioso e entrega no prazo.",
-      es: "El bot de WhatsApp ayudó muchísimo con la atención, hoy resuelve la mayoría de las dudas solo. Todavía quedan cosas para ajustar, pero el soporte es atento y cumple los plazos.",
-      en: "The WhatsApp bot really helped our support, it handles most questions on its own now. There are still things to tweak, but the team is attentive and meets deadlines.",
-    },
-  },
-  {
-    name: "Camila Rossi",
-    role: "Marketing · Apex Group",
-    initials: "CR",
-    rating: 3,
-    lang: "es",
-    text: {
-      es: "El diseño final nos gustó y se nota el trabajo. La comunicación al principio fue un poco lenta y nos costó alinear expectativas, pero el resultado terminó siendo bueno.",
-      pt: "Gostamos do design final e dá pra notar o trabalho. A comunicação no começo foi um pouco lenta e custou alinhar expectativas, mas o resultado acabou sendo bom.",
-      en: "We liked the final design and the craft shows. Communication was a bit slow at first and aligning expectations took effort, but the result ended up being good.",
-    },
-  },
-  {
-    name: "João Pereira",
-    role: "Diretor · NorteTech",
-    initials: "JP",
-    rating: 5,
-    lang: "pt",
-    text: {
-      pt: "Automatizaram processos internos que tomavam horas todo dia. A equipe sobrou tempo pra focar em vender. Recomendo, muito profissionais.",
-      es: "Automatizaron procesos internos que nos tomaban horas todos los días. El equipo ganó tiempo para enfocarse en vender. Los recomiendo, muy profesionales.",
-      en: "They automated internal processes that used to take hours every day. The team freed up time to focus on selling. Highly recommend, very professional.",
-    },
-  },
-  {
-    name: "Mateo Álvarez",
-    role: "Founder · Nova Store",
-    initials: "MA",
-    rating: 4,
-    lang: "es",
-    text: {
-      es: "Buena experiencia en general. El funnel mejoró las conversiones y vimos resultados en pocas semanas. Algunas integraciones llevaron más tiempo del esperado, pero funcionan bien.",
-      pt: "Boa experiência no geral. O funil melhorou as conversões e vimos resultados em poucas semanas. Algumas integrações demoraram mais do que o esperado, mas funcionam bem.",
-      en: "Solid experience overall. The funnel improved conversions and we saw results within weeks. Some integrations took longer than expected, but they work well.",
-    },
-  },
-  {
-    name: "Beatriz Lima",
-    role: "COO · Studio Verão",
-    initials: "BL",
-    rating: 5,
-    lang: "pt",
-    text: {
-      pt: "Trabalho de alto nível. Entenderam a nossa marca rápido e entregaram algo do qual a gente se orgulha de mostrar. Vamos seguir trabalhando juntos.",
-      es: "Trabajo de alto nivel. Entendieron nuestra marca rápido y entregaron algo que nos enorgullece mostrar. Vamos a seguir trabajando juntos.",
-      en: "High-level work. They understood our brand quickly and delivered something we're proud to show. We'll keep working with them.",
-    },
-  },
+function Collections() {
+  return (
+    <section id="colecciones" className="bg-[color:var(--card)] py-28 md:py-40">
+      <div className="mx-auto max-w-[1400px] px-6 md:px-10">
+        <Reveal className="mb-16 flex flex-col items-start justify-between gap-6 md:flex-row md:items-end">
+          <div>
+            <p className="mb-5 text-[11px] uppercase tracking-luxury text-[color:var(--bronze)]">— Colecciones Destacadas</p>
+            <h2 className="font-serif text-[34px] leading-[1.1] text-[color:var(--ink)] md:text-[54px]">
+              Cuatro Universos.<br />
+              <span className="italic font-light">Un Solo Estilo.</span>
+            </h2>
+          </div>
+          <p className="max-w-sm text-sm leading-relaxed text-[color:var(--muted-foreground)]">
+            Cada colección NOVA es una conversación silenciosa entre el material, el corte y la luz del Mediterráneo.
+          </p>
+        </Reveal>
+
+        <div className="grid gap-x-6 gap-y-16 md:grid-cols-2">
+          {COLLECTIONS.map((c, i) => (
+            <Reveal key={c.name} delay={i * 120}>
+              <a href="#" className="group block">
+                <div className="relative aspect-[4/5] overflow-hidden bg-[color:var(--muted)]">
+                  <img
+                    src={c.img}
+                    alt={c.name}
+                    loading="lazy"
+                    className="image-hover h-full w-full object-cover"
+                  />
+                  <span className="absolute left-5 top-5 bg-[color:var(--cream)]/90 px-3 py-1 text-[10px] uppercase tracking-luxury text-[color:var(--cocoa)] backdrop-blur-sm">
+                    {c.tag}
+                  </span>
+                </div>
+                <div className="mt-6 flex items-end justify-between gap-6">
+                  <div>
+                    <h3 className="font-serif text-2xl text-[color:var(--ink)] md:text-3xl">{c.name}</h3>
+                    <p className="mt-2 max-w-md text-sm text-[color:var(--muted-foreground)]">{c.desc}</p>
+                  </div>
+                  <span className="shrink-0 text-[11px] font-semibold uppercase tracking-editorial text-[color:var(--cocoa)] nova-link">
+                    Explorar →
+                  </span>
+                </div>
+              </a>
+            </Reveal>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// --- Categories ---
+const CATEGORIES = ["Camisas", "Polos", "Pantalones", "Blazers", "Calzado", "Accesorios"];
+
+function Categories() {
+  return (
+    <section id="categorias" className="mx-auto max-w-[1400px] px-6 py-28 md:px-10 md:py-40">
+      <Reveal className="mb-16 max-w-2xl">
+        <p className="mb-5 text-[11px] uppercase tracking-luxury text-[color:var(--bronze)]">— Categorías</p>
+        <h2 className="font-serif text-[34px] leading-[1.1] text-[color:var(--ink)] md:text-[54px]">
+          Compra por <span className="italic font-light">Categoría.</span>
+        </h2>
+      </Reveal>
+
+      <div className="grid grid-cols-2 gap-px bg-[color:var(--border)] md:grid-cols-3">
+        {CATEGORIES.map((c, i) => (
+          <Reveal key={c} delay={i * 60}>
+            <a
+              href="#"
+              className="group relative flex aspect-[4/3] flex-col justify-between bg-[color:var(--cream)] p-6 transition-colors duration-500 hover:bg-[color:var(--sand)]/40 md:p-8"
+            >
+              <span className="text-[11px] uppercase tracking-editorial text-[color:var(--bronze)]">0{i + 1}</span>
+              <div>
+                <h3 className="font-serif text-3xl text-[color:var(--ink)] md:text-4xl">{c}</h3>
+                <span className="mt-3 inline-flex items-center gap-2 text-[11px] uppercase tracking-editorial text-[color:var(--cocoa)] transition-all duration-500 group-hover:gap-4">
+                  Ver pieza
+                  <span>→</span>
+                </span>
+              </div>
+            </a>
+          </Reveal>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+// --- Testimonials ---
+const TESTIMONIALS = [
+  { name: "Carlos M.", city: "Madrid", text: "La calidad supera ampliamente mis expectativas. NOVA se convirtió en mi marca favorita.", stars: 5 },
+  { name: "Andrés V.", city: "Bogotá", text: "La camisa de lino es una obra maestra. Cae perfecto, se siente como una segunda piel.", stars: 5 },
+  { name: "Lucas P.", city: "Buenos Aires", text: "Discreción, elegancia y materiales nobles. Lo que buscaba hace años.", stars: 4 },
+  { name: "Rafael S.", city: "São Paulo", text: "Atención impecable y prendas que envejecen con dignidad. Vale cada peso.", stars: 5 },
+  { name: "Mateo F.", city: "Ciudad de México", text: "El blazer de la colección Evening es de otro planeta. Recibo cumplidos cada vez que lo uso.", stars: 5 },
 ];
 
 function Testimonials() {
-  const { t, lang } = useLang();
   return (
-    <section className="relative py-28">
-      <div className="mx-auto max-w-7xl px-6">
-        <Reveal>
-          <SectionHeader
-            eyebrow={t("tst.eyebrow")}
-            title={<>{t("tst.title.1")} <span className="text-gradient-gold">{t("tst.title.2")}</span>.</>}
-          />
+    <section className="bg-[color:var(--ink)] py-28 text-[color:var(--cream)] md:py-40 relative overflow-hidden grain">
+      <div className="mx-auto max-w-[1400px] px-6 md:px-10">
+        <Reveal className="mb-16 max-w-2xl">
+          <p className="mb-5 text-[11px] uppercase tracking-luxury text-[color:var(--bronze)]">— Voces NOVA</p>
+          <h2 className="font-serif text-[34px] leading-[1.1] md:text-[54px]">
+            Lo Que Dicen <span className="italic font-light">Nuestros Clientes.</span>
+          </h2>
         </Reveal>
-        <div className="mt-14 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-          {TESTIMONIALS.map((tst, i) => (
-            <Reveal key={tst.name} delay={i * 100}>
-              <figure className="glass rounded-2xl p-7 h-full flex flex-col">
-                <div className="flex items-center gap-0.5">
-                  {Array.from({ length: 5 }).map((_, k) => (
-                    <Star
-                      key={k}
-                      className={`h-4 w-4 ${k < tst.rating ? "text-[#f5d76e] fill-current" : "text-white/15"}`}
-                    />
-                  ))}
-                  <span className="ml-2 text-xs text-white/40">{tst.rating}.0</span>
+
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {TESTIMONIALS.map((t, i) => (
+            <Reveal key={t.name} delay={i * 80}>
+              <figure className="flex h-full flex-col justify-between border border-[color:var(--cream)]/15 p-8 transition-colors duration-500 hover:border-[color:var(--sand)]/60">
+                <div>
+                  <div className="flex gap-1 text-[color:var(--sand)]">
+                    {Array.from({ length: 5 }).map((_, k) => (
+                      <span key={k} className={k < t.stars ? "" : "opacity-25"}>★</span>
+                    ))}
+                  </div>
+                  <blockquote className="mt-6 font-serif text-xl leading-snug text-[color:var(--cream)]/95">
+                    “{t.text}”
+                  </blockquote>
                 </div>
-                <blockquote className="mt-5 text-white/80 leading-relaxed">
-                  "{tst.text[lang]}"
-                </blockquote>
-                <figcaption className="mt-6 flex items-center gap-3">
-                  <span className="grid place-items-center h-10 w-10 rounded-full bg-gradient-to-br from-[#3b82f6] to-[#1e3a8a] text-sm font-medium">
-                    {tst.initials}
-                  </span>
-                  <span className="flex-1">
-                    <div className="text-sm font-medium text-white">{tst.name}</div>
-                    <div className="text-xs text-white/50">{tst.role}</div>
-                  </span>
-                  <span className="text-[10px] uppercase tracking-widest text-white/30 border border-white/10 rounded-full px-2 py-0.5">
-                    {tst.lang}
-                  </span>
+                <figcaption className="mt-10 flex items-center gap-3 text-[11px] uppercase tracking-editorial text-[color:var(--cream)]/60">
+                  <span className="h-px w-6 bg-[color:var(--sand)]" />
+                  {t.name} — {t.city}
                 </figcaption>
               </figure>
             </Reveal>
@@ -718,40 +349,89 @@ function Testimonials() {
   );
 }
 
-function FinalCTA() {
-  const { t } = useLang();
+// --- Guarantee ---
+function Guarantee() {
   return (
-    <section id="contacto" className="relative py-32 overflow-hidden">
-      <div className="absolute inset-0 -z-10">
-        <div className="absolute inset-0 radial-glow" />
-        <div className="absolute inset-0 grid-bg opacity-50" />
+    <section className="mx-auto max-w-[1400px] px-6 py-28 md:px-10 md:py-40">
+      <Reveal>
+        <div className="grid items-center gap-16 border-y hairline py-16 md:grid-cols-[auto_1fr_auto] md:py-20">
+          <Seal />
+          <div>
+            <p className="mb-5 text-[11px] uppercase tracking-luxury text-[color:var(--bronze)]">— Garantía NOVA</p>
+            <h2 className="font-serif text-[32px] leading-[1.1] text-[color:var(--ink)] md:text-[44px]">
+              Compra con <span className="italic">Total Confianza.</span>
+            </h2>
+            <p className="mt-5 max-w-xl text-sm leading-relaxed text-[color:var(--muted-foreground)] md:text-base">
+              Si tu producto no cumple tus expectativas, puedes solicitar cambio o devolución dentro de los primeros 7 días, sin preguntas.
+            </p>
+          </div>
+          <a href="#colecciones" className="btn-nova btn-nova-ghost">Empezar a Comprar</a>
+        </div>
+      </Reveal>
+    </section>
+  );
+}
+
+function Seal() {
+  return (
+    <div className="relative h-32 w-32 shrink-0">
+      <svg viewBox="0 0 200 200" className="absolute inset-0 h-full w-full animate-[spin_28s_linear_infinite] text-[color:var(--cocoa)]">
+        <defs>
+          <path id="circle" d="M 100,100 m -78,0 a 78,78 0 1,1 156,0 a 78,78 0 1,1 -156,0" />
+        </defs>
+        <text fontSize="13" letterSpacing="6" fill="currentColor" fontFamily="Inter">
+          <textPath href="#circle">NOVA · QUIET LUXURY · ATEMPORAL · CRAFTED · </textPath>
+        </text>
+      </svg>
+      <div className="absolute inset-6 flex items-center justify-center rounded-full border border-[color:var(--cocoa)] font-serif text-2xl italic text-[color:var(--cocoa)]">
+        N
       </div>
-      <div className="mx-auto max-w-5xl px-6 text-center">
+    </div>
+  );
+}
+
+// --- Limited Offer ---
+function Limited() {
+  const [t, setT] = useState({ d: 0, h: 0, m: 0, s: 0 });
+  useEffect(() => {
+    const target = Date.now() + 1000 * 60 * 60 * 72;
+    const i = setInterval(() => {
+      const diff = Math.max(0, target - Date.now());
+      const d = Math.floor(diff / 86400000);
+      const h = Math.floor((diff / 3600000) % 24);
+      const m = Math.floor((diff / 60000) % 60);
+      const s = Math.floor((diff / 1000) % 60);
+      setT({ d, h, m, s });
+    }, 1000);
+    return () => clearInterval(i);
+  }, []);
+  const Box = ({ v, l }: { v: number; l: string }) => (
+    <div className="flex flex-col items-center">
+      <span className="font-serif text-5xl text-[color:var(--cream)] md:text-7xl">{String(v).padStart(2, "0")}</span>
+      <span className="mt-2 text-[10px] uppercase tracking-luxury text-[color:var(--sand)]">{l}</span>
+    </div>
+  );
+  return (
+    <section className="relative overflow-hidden bg-[color:var(--ink)]">
+      <img src={limitedImg} alt="" className="absolute inset-0 h-full w-full object-cover opacity-40" loading="lazy" />
+      <div className="absolute inset-0 bg-gradient-to-r from-[#1A1A1A] via-[#1A1A1A]/85 to-transparent" />
+      <div className="relative mx-auto grid max-w-[1400px] gap-16 px-6 py-28 md:grid-cols-2 md:px-10 md:py-40">
         <Reveal>
-          <h2 className="font-display text-5xl md:text-7xl lg:text-8xl font-semibold tracking-tight leading-[1.02]">
-            {t("cta.title.1")}{" "}
-            <span className="text-gradient-electric">{t("cta.title.2")}</span>.
+          <p className="mb-5 text-[11px] uppercase tracking-luxury text-[color:var(--bronze)]">— Edición Limitada</p>
+          <h2 className="font-serif text-[36px] leading-[1.05] text-[color:var(--cream)] md:text-[60px]">
+            Ediciones <span className="italic font-light">Limitadas.</span>
           </h2>
-        </Reveal>
-        <Reveal delay={150}>
-          <p className="mt-7 text-white/60 text-lg md:text-xl max-w-2xl mx-auto">
-            {t("cta.sub")}
+          <p className="mt-6 max-w-md text-base leading-relaxed text-[color:var(--cream)]/75">
+            Producciones reducidas para preservar la exclusividad de cada colección. Una vez agotadas, no vuelven.
           </p>
+          <a href="#colecciones" className="btn-nova btn-nova-light mt-10">Comprar Ahora</a>
         </Reveal>
-        <Reveal delay={300}>
-          <div className="mt-12 flex flex-col sm:flex-row items-center justify-center gap-3">
-            <a href={WHATSAPP_URL} target="_blank" rel="noreferrer"
-              className="inline-flex items-center justify-center gap-2 rounded-full bg-white text-black px-7 py-4 text-base font-medium hover:scale-[1.02] transition glow-electric">
-              <Code2 className="h-4 w-4" /> {t("cta.b1")}
-            </a>
-            <a href={WHATSAPP_URL} target="_blank" rel="noreferrer"
-              className="inline-flex items-center justify-center gap-2 rounded-full glass-strong text-white px-7 py-4 text-base font-medium hover:bg-white/10 transition">
-              <Cpu className="h-4 w-4" /> {t("cta.b2")}
-            </a>
-            <a href={WHATSAPP_URL} target="_blank" rel="noreferrer"
-              className="inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-[#f5d76e] to-[#d4a418] text-black px-7 py-4 text-base font-medium hover:scale-[1.02] transition glow-gold">
-              <MessageCircle className="h-4 w-4" /> {t("cta.b3")}
-            </a>
+        <Reveal delay={150} className="flex flex-col justify-center">
+          <div className="grid grid-cols-4 gap-4 border-y border-[color:var(--cream)]/15 py-10 md:gap-8">
+            <Box v={t.d} l="Días" />
+            <Box v={t.h} l="Horas" />
+            <Box v={t.m} l="Min" />
+            <Box v={t.s} l="Seg" />
           </div>
         </Reveal>
       </div>
@@ -759,90 +439,138 @@ function FinalCTA() {
   );
 }
 
-function Footer() {
-  const { t } = useLang();
+// --- FAQ ---
+const FAQS = [
+  { q: "¿Cuánto tarda el envío?", a: "Despachamos en 24h. Los envíos a Brasil llegan entre 3 y 7 días hábiles según ciudad. Envío exprés disponible." },
+  { q: "¿Realizan cambios?", a: "Sí. Tienes 7 días desde la recepción para solicitar un cambio o devolución sin preguntas." },
+  { q: "¿Cómo elegir mi talla?", a: "Cada ficha de producto incluye una guía de tallas exclusiva NOVA. Si tienes dudas, nuestro concierge te asesora por WhatsApp." },
+  { q: "¿Qué métodos de pago aceptan?", a: "Tarjeta crédito y débito, PIX, transferencia bancaria y pago en hasta 6 cuotas sin interés." },
+  { q: "¿Los productos tienen garantía?", a: "Todas las prendas NOVA cuentan con garantía de confección de 6 meses." },
+];
+
+function FAQ() {
+  const [open, setOpen] = useState<number | null>(0);
   return (
-    <footer className="relative border-t border-white/10 pt-16 pb-10">
-      <div className="mx-auto max-w-7xl px-6">
-        <div className="grid gap-10 md:grid-cols-4">
+    <section id="faq" className="mx-auto max-w-[1100px] px-6 py-28 md:px-10 md:py-40">
+      <Reveal className="mb-14 text-center">
+        <p className="mb-5 text-[11px] uppercase tracking-luxury text-[color:var(--bronze)]">— Preguntas Frecuentes</p>
+        <h2 className="font-serif text-[34px] leading-[1.1] text-[color:var(--ink)] md:text-[52px]">
+          Lo que <span className="italic font-light">necesitas saber.</span>
+        </h2>
+      </Reveal>
+      <div className="border-t hairline">
+        {FAQS.map((f, i) => {
+          const isOpen = open === i;
+          return (
+            <Reveal key={f.q}>
+              <button
+                onClick={() => setOpen(isOpen ? null : i)}
+                className="group flex w-full items-center justify-between border-b hairline py-7 text-left transition-colors duration-400 hover:text-[color:var(--cocoa)]"
+              >
+                <span className="font-serif text-xl text-[color:var(--ink)] md:text-2xl">{f.q}</span>
+                <span className={`ml-6 text-2xl text-[color:var(--cocoa)] transition-transform duration-500 ${isOpen ? "rotate-45" : ""}`}>+</span>
+              </button>
+              <div
+                className={`grid overflow-hidden border-b hairline transition-all duration-500 ease-out ${
+                  isOpen ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
+                }`}
+              >
+                <div className="overflow-hidden">
+                  <p className="max-w-2xl py-6 text-[15px] leading-relaxed text-[color:var(--muted-foreground)]">{f.a}</p>
+                </div>
+              </div>
+            </Reveal>
+          );
+        })}
+      </div>
+    </section>
+  );
+}
+
+// --- Final CTA ---
+function FinalCTA() {
+  return (
+    <section className="relative h-[92svh] min-h-[620px] w-full overflow-hidden">
+      <img src={ctaImg} alt="Hombre elegante frente al mar Mediterráneo" className="absolute inset-0 h-full w-full object-cover" loading="lazy" />
+      <div className="absolute inset-0 bg-gradient-to-t from-[#1A1A1A]/70 via-transparent to-[#1A1A1A]/20" />
+      <div className="relative z-10 mx-auto flex h-full max-w-[1200px] flex-col items-center justify-center px-6 text-center md:px-10">
+        <Reveal>
+          <p className="mb-6 text-[11px] uppercase tracking-luxury text-[color:var(--cream)]/80">— NOVA</p>
+        </Reveal>
+        <Reveal delay={120}>
+          <h2 className="max-w-4xl font-serif text-[36px] leading-[1.08] text-[color:var(--cream)] md:text-[70px]">
+            Tu Mejor Versión Comienza con<br />
+            <span className="italic font-light">Cómo Te Presentas al Mundo.</span>
+          </h2>
+        </Reveal>
+        <Reveal delay={240}>
+          <p className="mt-8 max-w-xl text-base leading-relaxed text-[color:var(--cream)]/85">
+            Descubre la colección diseñada para hombres que entienden el valor de la elegancia auténtica.
+          </p>
+        </Reveal>
+        <Reveal delay={360}>
+          <a href="#colecciones" className="btn-nova btn-nova-light mt-10">Explorar NOVA</a>
+        </Reveal>
+      </div>
+    </section>
+  );
+}
+
+// --- Footer ---
+function Footer() {
+  return (
+    <footer id="nosotros" className="border-t hairline bg-[color:var(--cream)]">
+      <div className="mx-auto max-w-[1400px] px-6 py-20 md:px-10">
+        <div className="grid gap-12 md:grid-cols-4">
           <div className="md:col-span-2">
-            <Logo />
-            <p className="mt-5 max-w-md text-sm text-white/55 leading-relaxed">
-              {t("ft.desc")}
+            <div className="font-serif text-3xl tracking-[0.18em] text-[color:var(--ink)]">NOVA</div>
+            <p className="mt-5 max-w-sm text-sm leading-relaxed text-[color:var(--muted-foreground)]">
+              Maison de moda masculina inspirada en el lujo silencioso del Mediterráneo. Piezas atemporales, materiales nobles, vida con propósito.
             </p>
-            <div className="mt-6 flex items-center gap-3">
-              {[
-                { Icon: MessageCircle, href: WHATSAPP_URL, label: "WhatsApp" },
-                { Icon: Instagram, href: "#", label: "Instagram" },
-                { Icon: Twitter, href: "#", label: "Twitter" },
-                { Icon: Linkedin, href: "#", label: "LinkedIn" },
-                { Icon: Mail, href: "mailto:hola@genesis.agency", label: "Email" },
-              ].map(({ Icon, href, label }) => (
-                <a key={label} aria-label={label} href={href} target="_blank" rel="noreferrer"
-                  className="grid place-items-center h-10 w-10 rounded-full glass hover:bg-white/10 transition">
-                  <Icon className="h-4 w-4" />
-                </a>
-              ))}
-            </div>
           </div>
           <div>
-            <h4 className="text-xs uppercase tracking-widest text-white/40">{t("ft.services")}</h4>
-            <ul className="mt-4 space-y-2 text-sm text-white/70">
-              <li><a href="#servicios" className="hover:text-white">{t("svc.web")}</a></li>
-              <li><a href="#servicios" className="hover:text-white">{t("svc.ai")}</a></li>
-              <li><a href="#servicios" className="hover:text-white">{t("svc.bot")}</a></li>
-              <li><a href="#servicios" className="hover:text-white">{t("svc.funnel")}</a></li>
+            <h4 className="mb-5 text-[11px] uppercase tracking-luxury text-[color:var(--bronze)]">Menú</h4>
+            <ul className="space-y-3 text-sm text-[color:var(--ink)]/80">
+              <li><a href="#top" className="nova-link">Inicio</a></li>
+              <li><a href="#colecciones" className="nova-link">Colecciones</a></li>
+              <li><a href="#categorias" className="nova-link">Categorías</a></li>
+              <li><a href="#nosotros" className="nova-link">Nosotros</a></li>
+              <li><a href="#faq" className="nova-link">Contacto</a></li>
             </ul>
           </div>
           <div>
-            <h4 className="text-xs uppercase tracking-widest text-white/40">{t("ft.company")}</h4>
-            <ul className="mt-4 space-y-2 text-sm text-white/70">
-              <li><a href="#proyectos" className="hover:text-white">{t("nav.projects")}</a></li>
-              <li><a href="#por-que" className="hover:text-white">{t("ft.why")}</a></li>
-              <li><a href="#contacto" className="hover:text-white">{t("nav.contact")}</a></li>
-              <li><a href={WHATSAPP_URL} target="_blank" rel="noreferrer" className="hover:text-white">{t("nav.whatsapp")}</a></li>
+            <h4 className="mb-5 text-[11px] uppercase tracking-luxury text-[color:var(--bronze)]">Sigue NOVA</h4>
+            <ul className="space-y-3 text-sm text-[color:var(--ink)]/80">
+              <li><a href="#" className="nova-link">Instagram</a></li>
+              <li><a href="#" className="nova-link">TikTok</a></li>
+              <li><a href="#" className="nova-link">WhatsApp</a></li>
             </ul>
           </div>
         </div>
-        <div className="mt-12 flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-white/10 pt-8 text-xs text-white/40">
-          <span>© {new Date().getFullYear()} GENESIS. {t("ft.rights")}</span>
-          <span>{t("ft.tag")}</span>
+        <div className="mt-16 flex flex-col items-start justify-between gap-4 border-t hairline pt-8 text-[11px] uppercase tracking-editorial text-[color:var(--muted-foreground)] md:flex-row md:items-center">
+          <span>© {new Date().getFullYear()} NOVA — Elegancia Atemporal.</span>
+          <span>Crafted with quiet care · Mediterranean Spirit</span>
         </div>
       </div>
     </footer>
   );
 }
 
-function FloatingWhatsApp() {
-  const { t } = useLang();
+function NovaLanding() {
   return (
-    <a href={WHATSAPP_URL} target="_blank" rel="noreferrer" aria-label="WhatsApp"
-      className="fixed bottom-6 right-6 z-50 inline-flex items-center gap-2 rounded-full bg-[#25D366] text-black pl-3 pr-5 py-3 font-medium shadow-2xl shadow-[#25D366]/30 hover:scale-105 transition">
-      <span className="grid place-items-center h-8 w-8 rounded-full bg-black/10">
-        <MessageCircle className="h-4 w-4" />
-      </span>
-      <span className="hidden sm:inline text-sm">{t("fab.chat")}</span>
-    </a>
-  );
-}
-
-function Landing() {
-  return (
-    <LanguageProvider>
-      <div className="min-h-screen bg-background text-foreground antialiased">
-        <Nav />
-        <main>
-          <Hero />
-          <Services />
-          <WhyGenesis />
-          <Portfolio />
-          <AutomationsAI />
-          <Testimonials />
-          <FinalCTA />
-        </main>
-        <Footer />
-        <FloatingWhatsApp />
-      </div>
-    </LanguageProvider>
+    <main className="bg-[color:var(--cream)] text-[color:var(--ink)]">
+      <Nav />
+      <Hero />
+      <Marquee />
+      <Benefits />
+      <Collections />
+      <Categories />
+      <Testimonials />
+      <Guarantee />
+      <Limited />
+      <FAQ />
+      <FinalCTA />
+      <Footer />
+    </main>
   );
 }
